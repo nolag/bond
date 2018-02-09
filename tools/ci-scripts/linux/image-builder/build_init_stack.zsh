@@ -22,12 +22,16 @@ if [[ -z "$BUILD_SOURCE_COMMIT" ]]; then
 fi
 
 SAVED_STACK_WORK=/opt/stack/stack-work/
-TEMP_COMPILER_PATH=/tmp/bond-only-compiler/
+
+# Absolute file paths get embedded in the compiled files, so we need to
+# pre-compile in the same place that the CI builds will also compile.
+BOND_ROOT=/root/bond
+COMPILER_PATH="$BOND_ROOT/compiler"
 
 mkdir -p "$SAVED_STACK_WORK"
-mkdir -p "$TEMP_COMPILER_PATH"
+mkdir -p "$COMPILER_PATH"
 
-pushd "$TEMP_COMPILER_PATH"
+pushd "$COMPILER_PATH"
 
 # Download the minimal files that Stack needs to figure out the dependent
 # packages.
@@ -42,12 +46,12 @@ for FILE in $STACK_FILES; do
     wget $FILE_URI
 done
 
-# We can't use --work-dir to move this outside the current directory, so we
-# use a symlink instead.
+# We can't use --work-dir to move .stack-work outside the current directory,
+# so we use a symlink instead.
 ln -s "$SAVED_STACK_WORK" .stack-work
 
 stack setup
 stack build --only-dependencies bond:gbc bond:gbc-tests
 
 popd
-rm -rf "$TEMP_COMPILER_PATH"
+rm -rf "$COMPILER_PATH"
