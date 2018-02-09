@@ -7,7 +7,6 @@ FLAVOR=$2
 BOOST=${3:-}
 COMPILER=${4:-clang}
 
-export BOND_ROOT=/root/bond
 export BUILD_ROOT=/root/build
 BUILD_SCRIPTS=$BOND_ROOT/tools/ci-scripts/linux
 

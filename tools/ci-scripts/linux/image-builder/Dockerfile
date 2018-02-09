@@ -1,11 +1,13 @@
 FROM ubuntu:16.04
 
-ARG BUILD_SOURCE_COMMIT
-
 # Cache folders
 VOLUME /root/.ccache
 # Source code
 VOLUME /root/bond
+
+ARG BUILD_SOURCE_COMMIT
+
+ENV BOND_ROOT=/root/bond
 
 # Enable PPAs
 RUN apt-get update && \

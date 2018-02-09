@@ -25,8 +25,7 @@ SAVED_STACK_WORK=/opt/stack/stack-work/
 
 # Absolute file paths get embedded in the compiled files, so we need to
 # pre-compile in the same place that the CI builds will also compile.
-BOND_ROOT=/root/bond
-COMPILER_PATH="$BOND_ROOT/compiler"
+COMPILER_PATH=$BOND_ROOT/compiler
 
 mkdir -p "$SAVED_STACK_WORK"
 mkdir -p "$COMPILER_PATH"
