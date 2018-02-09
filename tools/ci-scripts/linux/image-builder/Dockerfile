@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG  $BUILD_SOURCE_COMMIT
+ARG BUILD_SOURCE_COMMIT
 
 # Cache folders
 VOLUME /root/.ccache /root/.stack
