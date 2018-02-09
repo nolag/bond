@@ -43,7 +43,7 @@ ln -s /root/.stack $SYMLINKED_HOME/.stack
 # image contains a saved stack-work and the source volume wasn't mounted
 # with an existing one.
 SAVED_STACK_WORK=/opt/stack/stack-work
-BUILD_STACK_WORK=$BUILD_ROOT/compiler/.stack-work
+BUILD_STACK_WORK=$BOND_ROOT/compiler/.stack-work
 if [[ -d $SAVED_STACK_WORK && ! -d $BUILD_STACK_WORK ]]; then
     ln -s $SAVED_STACK_WORK $BUILD_STACK_WORK
 fi
