@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 ARG BUILD_SOURCE_COMMIT
 
 # Cache folders
-VOLUME /root/.ccache /root/.stack
+VOLUME /root/.ccache
 # Source code
 VOLUME /root/bond
 
@@ -31,7 +31,11 @@ RUN apt-get -y install \
     cmake \
     golang
 
-# Components for Haskell. See https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux
+# Components for Haskell. See
+# https://docs.haskellstack.org/en/stable/install_and_upgrade/#linux
+
+# Move what's normally stored in ~/.stack to something non-user specific.
+ENV STACK_ROOT=/opt/stack/stack-root
 RUN wget -qO- https://get.haskellstack.org/ | sh
 ADD build_init_stack.zsh /root/
 RUN ["zsh", "-c", "/root/build_init_stack.zsh $BUILD_SOURCE_COMMIT"]

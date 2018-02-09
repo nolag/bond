@@ -37,7 +37,6 @@ export BOOST_ROOT=/opt/boosts/boost_1_63_0
 
 mkdir -p $SYMLINKED_HOME $BUILD_ROOT
 ln -s /root/.ccache $SYMLINKED_HOME/.ccache
-ln -s /root/.stack $SYMLINKED_HOME/.stack
 
 # Point the build's .stack-work at one saved in the image, but only if the
 # image contains a saved stack-work and the source volume wasn't mounted
