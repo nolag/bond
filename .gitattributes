@@ -36,8 +36,14 @@ LICENSE    text
 
 # Some Windows-specific files should always be CRLF
 
-*.DotSettings eol=crlf
-*.sln    eol=crlf
+*.DotSettings     text eol=crlf
+*.sln     text eol=crlf
+
+# Linux scripts need to always have LF. If not, things like build a Docker
+# image from Windows will result in un-runable scripts.
+
+*.sh    text eol=lf
+*.zsh    text eol=lf
 
 # These are binary file types.
 
