@@ -88,7 +88,8 @@ comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
         public: typedef #{typename}methods#{length serviceMethods}::type methods;
         #{constructor}
     };
-    #{onlyTemplate $ CPP.schemaMetadata cpp s}
+    -- TODO
+    #{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}
 
     #{template}class #{className}::Proxy
         : public #{className}
@@ -169,8 +170,9 @@ comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
     };
     |]
       where
-        className = CPP.className s
-        template = CPP.template s
+        -- TODO here
+        className = CPP.className s Nothing
+        template = CPP.template s Nothing
         onlyTemplate x = if null declParams then mempty else x
         typename = onlyTemplate [lt|typename |]
 

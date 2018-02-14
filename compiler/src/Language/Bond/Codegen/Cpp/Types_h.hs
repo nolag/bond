@@ -32,8 +32,9 @@ types_h :: [String]     -- ^ list of optional header files to be @#include@'ed b
         -> Bool         -- ^ 'True' to generate constructors with allocator
         -> Bool         -- ^ 'True' to generate type aliases
         -> Bool         -- ^ 'True' to use std::scoped_allocator_adaptor for strings and containers
+        -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
         -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
-types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled cpp file imports declarations = ("_types.h", [lt|
+types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept cpp file imports declarations = ("_types.h", [lt|
 #pragma once
 #{newlineBeginSep 0 includeHeader userHeaders}
 #include <bond/core/bond_version.h>
@@ -48,18 +49,23 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
 
 #include <bond/core/config.h>
 #include <bond/core/containers.h>
+#{memoryInclude}
 #{newlineSep 0 optionalHeader bondHeaders}
 #{includeEnum}
 #{newlineSepEnd 0 includeImport imports}
 #{CPP.openNamespace cpp}
     #{doubleLineSepEnd 1 id $ catMaybes $ aliasDeclarations}#{doubleLineSep 1 typeDeclaration declarations}
 #{CPP.closeNamespace cpp}
-#{optional usesAllocatorSpecialization allocator}
+#{optional usesAllocatorSpecialization allocatorType}
 |])
   where
-    aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
+    allocatorType = if allocator_concept then Just "_Alloc" else allocator
+    allocatorDefaultType = if allocator_concept then
+         if isJust allocator then allocator else Just "std::allocator<void*>"
+         else Nothing
 
-    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a}using #{declName} = #{getAliasDeclTypeName cpp a};|]
+    aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
+    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a allocatorType}using #{declName} = #{getAliasDeclTypeName cpp a};|]
     aliasDeclName _ = Nothing
 
     hexVersion (Version xs _) = foldr showHex "" xs
@@ -80,6 +86,8 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     includeHeader header = [lt|#include #{header}|]
 
     includeEnum = if enumHeader then [lt|#include "#{file}_enum.h"|] else mempty
+    
+    memoryInclude = if allocator_concept then [lt|#include <memory>|] else mempty
 
     -- True if declarations have any type satisfying f
     have f = getAny $ F.foldMap g declarations
@@ -113,7 +121,7 @@ namespace std
 |]
       where
         usesAllocator s@Struct {..} = [lt|template <typename _Alloc#{sepBeginBy ", typename " paramName declParams}>
-    struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{CPP.classParams s}, _Alloc>
+    struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{CPP.classParams s allocatorType}, _Alloc>
         : is_convertible<_Alloc, #{allocParam}>
     {};|]
           where
@@ -122,7 +130,7 @@ namespace std
         usesAllocator _ = mempty
 
     -- forward declaration
-    typeDeclaration f@Forward {..} = [lt|#{CPP.template f}struct #{declName};|]
+    typeDeclaration f@Forward {..} = [lt|#{CPP.template f allocatorType}struct #{declName};|]
 
     -- struct definition
     typeDeclaration s@Struct {..} = [lt|
@@ -130,9 +138,9 @@ namespace std
     {
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
 
-        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocator) mempty}
-        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocator) mempty}
-        #{optional allocatorCtor allocator}
+        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocatorType) mempty}
+        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocatorType) mempty}
+        #{optional allocatorCtor allocatorType}
         #{assignmentOp}
 
         bool operator==(const #{declName}&#{otherParam}) const
@@ -161,8 +169,8 @@ namespace std
         #{leftParamName}.swap(#{rightParamName});
     }|]
       where
-        template = CPP.template s
-        qualifiedClassName = CPP.qualifiedClassName cpp s
+        template = CPP.template s allocatorDefaultType
+        qualifiedClassName = CPP.qualifiedClassName cpp s allocatorType
 
         fieldNames :: [String]
         fieldNames = foldMapStructFields (return . fieldName) s
@@ -172,8 +180,11 @@ namespace std
         hasOnlyMetaFields = not (any (not . getAny . metaField) structFields) && isNothing structBase
         hasMetaFields = getAny $ foldMapStructFields metaField s
 
+        base (BT_UserDefined d _) = [lt|
+      : #{CPP.qualifiedClassName cpp d allocatorType}|]
         base x = [lt|
       : #{cppType x}|]
+
 
         field Field {..} = [lt|#{cppType fieldType} #{fieldName};|]
 
@@ -219,13 +230,14 @@ namespace std
         }|]
 
         needAlloc alloc = isJust structBase || any (allocParameterized alloc . fieldType) structFields
+        
         allocParameterized alloc t = (isStruct t) || (L.isInfixOf (L.pack alloc) $ toLazyText $ cppTypeExpandAliases t)
 
         -- default constructor
         defaultCtor = [lt|
         #{dummyTemplateTag}#{declName}(#{vc12WorkaroundParam})#{initList}#{ctorBody}|]
           where
-            needAllocParam = maybe False needAlloc allocator
+            needAllocParam = maybe False needAlloc allocatorType
 
             vc12WorkaroundParam = if needAllocParam then [lt|_bond_vc12_ctor_workaround_ = {}|] else mempty
 
@@ -258,7 +270,7 @@ namespace std
             allocInitValue (BT_Nullable t) _ = allocInitValue t Nothing
             allocInitValue (BT_Maybe t) _ = allocInitValue t Nothing
             allocInitValue t (Just d)
-                | isString t = Just [lt|#{cppDefaultValue t d}, allocator|]
+                | isString t = Just [lt|#{cppDefaultValue t d}, allocatorType|]
             allocInitValue t Nothing
                 | isContainer t || isMetaName t || isString t || isStruct t = Just "allocator"
             allocInitValue t d = initValue t d
@@ -288,12 +300,12 @@ namespace std
 
         #{declName}(#{otherParamDecl declName}#{otherParam}, const #{alloc}&#{allocParam})#{initList}#{ctorBody}|]
           where
-            allocParam = if needAlloc alloc then [lt| allocator|] else mempty
+            allocParam = if needAlloc alloc then [lt| allocatorType|] else mempty
 
             initList = initializeList
                 (optional baseInit structBase)
                 (commaLineSep 3 fieldInit structFields)
-            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocator)|]
+            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocatorType)|]
 
             fieldRef fieldName = [lt|#{otherParamName}.#{fieldName}|]
             fieldInit Field {..} = [lt|#{fieldName}(#{otherParamValue $ fieldRef fieldName}#{allocInitValueText fieldType})|]
@@ -306,7 +318,7 @@ namespace std
             allocInitValue (BT_Nullable t) = allocInitValue t
             allocInitValue (BT_Maybe t) = allocInitValue t
             allocInitValue t
-                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocator|]
+                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocatorType|]
                 | otherwise = Nothing
 
         -- copy constructor with allocator

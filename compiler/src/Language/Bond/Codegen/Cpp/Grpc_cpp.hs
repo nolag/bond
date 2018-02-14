@@ -28,6 +28,7 @@ grpc_cpp cpp file _imports declarations = ("_grpc.cpp", [lt|
   where
     -- definitions of Schema statics for non-generic services
     statics s@Service {..} =
-        if null declParams then CPP.schemaMetadata cpp s else mempty
+        -- TODO 
+        if null declParams then CPP.schemaMetadata cpp s Nothing else mempty
 
     statics _ = mempty

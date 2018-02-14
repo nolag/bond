@@ -43,7 +43,7 @@ reflection_h export_attribute cpp file imports declarations = ("_reflection.h", 
     schema s@Struct {..} = [lt|//
     // #{declName}
     //
-    #{CPP.template s}struct #{className}::Schema
+    #{CPP.template s Nothing}struct #{className}::Schema
     {
         typedef #{baseType structBase} base;
 
@@ -66,11 +66,14 @@ reflection_h export_attribute cpp file imports declarations = ("_reflection.h", 
             );
         }
     };
-    #{onlyTemplate $ CPP.schemaMetadata cpp s}|]
+    -- TODO here
+    #{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}|]
       where
-        classParams = CPP.classParams s
+        -- TODO here
+        classParams = CPP.classParams s Nothing
 
-        className = CPP.className s
+        -- TODO here
+        className = CPP.className s Nothing
 
         export_attr = onlyNonTemplate $ optional (\a -> [lt|#{a}
         |]) export_attribute

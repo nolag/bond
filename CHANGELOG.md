@@ -37,6 +37,7 @@ different versioning scheme, following the Haskell community's
   Additionally, a user-defined map type can now be provided to `GetNameToValueMap` and
   `GetValueToNameMap`.
 * `import` statements can now end with an optional semicolon.
+* C++ codegen now can generate types using the allocator concept using `--allocator-concept` is passed to `gbc` (http://en.cppreference.com/w/cpp/concept/Allocator).
 
 ### C++ ###
 

@@ -45,6 +45,7 @@ data Options
         , type_aliases_enabled :: Bool
         , scoped_alloc_enabled :: Bool
         , service_inheritance_enabled :: Bool
+		, allocator_concept :: Bool
         }
     | Cs
         { files :: [FilePath]
@@ -90,7 +91,7 @@ cpp = Cpp
     , namespace = def &= typ "MAPPING" &= name "n" &= help "Custom namespace mapping in the form bond_namespace=language_namespace"
     , header = def &= typ "HEADER" &= name "h" &= help "Emit #include HEADER into the generated files"
     , enum_header = def &= name "e" &= help "Generate enums into a separate header file"
-    , allocator = def &= typ "ALLOCATOR" &= help "Generate types using the specified  allocator"
+    , allocator = def &= typ "ALLOCATOR" &= help "Generate types using the specified  allocator, if specified with allocator-concept, the provided allocator will be used as the default allocator type"
     , apply = def &= typ "PROTOCOL" &= help "Generate Apply function overloads for the specified protocol only; supported protocols: compact, fast and simple"
     , export_attribute = def &= typ "ATTRIBUTE" &= explicit &= name "apply-attribute" &= name "export-attribute" &= help "Prefix declarations for library export with the specified C++ attribute/declspec. apply-attribute is a deprecated synonym."
     , jobs = def &= opt "0" &= typ "NUM" &= name "j" &= help "Run NUM jobs simultaneously (or '$ncpus' if no NUM is not given)"
@@ -102,6 +103,7 @@ cpp = Cpp
     , type_aliases_enabled = False &= explicit &= name "type-aliases" &= help "Generate type aliases"
     , scoped_alloc_enabled = False &= explicit &= name "scoped-alloc" &= help "Use std::scoped_allocator_adaptor for strings and containers"
     , service_inheritance_enabled = False &= explicit &= name "enable-service-inheritance" &= help "Enable service inheritance syntax in IDL"
+	, allocator_concept = False &= explicit &= name "allocator-concept" &= help "Generate type templated on an allocator that fits the allocator concept (see http://en.cppreference.com/w/cpp/concept/Allocator).  When specified with allocator, the provided allocator will be used as the default allocator type, otherwise std::allocator<void*> will be used."
     } &=
     name "c++" &=
     help "Generate C++ code"

@@ -174,11 +174,14 @@ inline #{className}::#{proxyName}<TThreadPool>::#{proxyName}(
 
     #{constructor}
 };
-#{onlyTemplate $ CPP.schemaMetadata cpp s}
+-- TODO
+#{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}
 |]
       where
-        className = CPP.className s
-        template = CPP.template s
+        -- TODO here
+        className = CPP.className s Nothing
+        -- TODO
+        template = CPP.template s Nothing
         onlyTemplate x = if null declParams then mempty else x
         typename = onlyTemplate [lt|typename |]
 

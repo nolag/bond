@@ -31,7 +31,8 @@ types_cpp cpp file _imports declarations = ("_types.cpp", [lt|
 
     -- definitions of Schema statics for non-generic structs
     statics s@Struct {..} =
-        if null declParams then CPP.schemaMetadata cpp s else mempty
+        -- TODO
+        if null declParams then CPP.schemaMetadata cpp s Nothing else mempty
 
     -- global variables for enum name/value conversions
     --

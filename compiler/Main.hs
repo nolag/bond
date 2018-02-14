@@ -78,7 +78,9 @@ writeSchema _ = error "writeSchema: impossible happened."
 
 cppCodegen :: Options -> IO()
 cppCodegen options@Cpp {..} = do
-    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled) allocator
+
+    let allocatorType = if allocator_concept then Just "_Alloc" else allocator
+    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled) allocatorType
     let typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
     concurrentlyFor_ files $ codeGen options typeMapping templates
   where
@@ -100,7 +102,7 @@ cppCodegen options@Cpp {..} = do
                         ]
     core_files = [
           reflection_h export_attribute
-        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled
+        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
         , types_cpp
         , apply_h applyProto export_attribute
         , apply_cpp applyProto

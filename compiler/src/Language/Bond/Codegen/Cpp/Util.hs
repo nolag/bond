@@ -47,24 +47,37 @@ closeNamespace cpp = newlineSep 0 close (reverse $ getNamespace cpp)
   where
     close n = [lt|} // namespace #{n}|]
 
-className :: Declaration -> String
-className decl = declName decl <> classParams decl
+className :: Declaration -> Maybe String -> String
+className decl allocator= declName decl <> classParams decl allocator
 
-classParams :: Declaration -> String
-classParams = angles . sepBy ", " paramName . declParams
+classParamsRaw :: Declaration -> String
+classParamsRaw = sepBy ", " paramName . declParams
 
-qualifiedClassName :: MappingContext -> Declaration -> String
-qualifiedClassName cpp s@Struct {..} = qualifiedName <> classParams s
+classParams :: Declaration -> Maybe String -> String
+classParams d (Just allocator) = angles $ concat [classParamsRaw d, optComma, allocator]
+    where
+        optComma = if null $ declParams d then "" else ", "
+classParams d Nothing = angles $ classParamsRaw d
+
+qualifiedClassName :: MappingContext -> Declaration -> Maybe String -> String
+qualifiedClassName cpp s@Struct {..} allocator = qualifiedName <> classParams s allocator
   where
     qualifiedName = unpack $ toLazyText $ getDeclTypeName cpp s
-qualifiedClassName _ _ = error "qualifiedClassName: impossible happened."
+qualifiedClassName _ _ _= error "qualifiedClassName: impossible happened."
 
-template :: Declaration -> Text
-template d = if null $ declParams d then mempty else [lt|template <typename #{params}>
+templateParams :: Declaration -> String
+templateParams d = if null $ declParams d then mempty else params
+    where
+        params = concat ["typename ", sepBy ", typename " paramName $ declParams d]
+
+template :: Declaration -> Maybe String -> Text
+template d (Just allocator) =  [lt|template <#{templateParams d}#{optComma}class _Alloc=#{allocator}>
     |]
-  where
-    params = sepBy ", typename " paramName $ declParams d
-
+    where
+        optComma = if null $ declParams d then mempty else [lt|, |]
+template d Nothing = if null $ declParams d then mempty else [lt|template <#{templateParams d}>
+    |]
+    
 -- attribute initializer
 attributeInit :: [Attribute] -> Text
 attributeInit [] = "::bond::reflection::Attributes()"
@@ -112,18 +125,18 @@ enumValue cpp (BT_UserDefined a@Alias {..} args) e = enumValue cpp (resolveAlias
 enumValue _ _ _ = error "enumValue: impossible happened."
 
 -- schema metadata static member definitions
-schemaMetadata :: MappingContext -> Declaration -> Text
-schemaMetadata cpp s@Struct {..} = [lt|
-    #{template s}const ::bond::Metadata #{className s}::Schema::metadata
-        = #{className s}::Schema::GetMetadata();#{newlineBeginSep 1 staticDef structFields}|]
+schemaMetadata :: MappingContext -> Declaration -> Maybe String -> Text
+schemaMetadata cpp s@Struct {..} allocator = [lt|
+    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
+        = #{className s allocator}::Schema::GetMetadata();#{newlineBeginSep 1 staticDef structFields}|]
   where
     -- static member definition for field metadata
     staticDef f@Field {..}
         | fieldModifier == Optional && null fieldAttributes = [lt|
-    #{template s}const ::bond::Metadata #{className s}::Schema::s_#{fieldName}_metadata
+    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}");|]
         | otherwise = [lt|
-    #{template s}const ::bond::Metadata #{className s}::Schema::s_#{fieldName}_metadata
+    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}", #{modifierTag f}::value,
                 #{attributeInit fieldAttributes});|]
       where
@@ -134,23 +147,24 @@ schemaMetadata cpp s@Struct {..} = [lt|
         explicitDefault d@(DefaultFloat _) = staticCast d
         explicitDefault d = defaultValue cpp fieldType d
         staticCast d = [lt|static_cast<#{getTypeName cpp fieldType}>(#{defaultValue cpp fieldType d})|]
-schemaMetadata _ s@Service {..} = [lt|
-    #{template s}const ::bond::Metadata #{className s}::Schema::metadata
+schemaMetadata _ s@Service {..} allocator = [lt|
+    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
         = ::bond::reflection::MetadataInit#{metadataInitArgs}("#{declName}", "#{idlNamespace}",
                 #{attributeInit declAttributes});#{newlineBeginSep 1 staticDef serviceMethods}|]
   where
     idl = MappingContext idlTypeMapping [] [] []
     idlNamespace = getDeclTypeName idl s
-    metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams s} >|]
+    -- TODO ? for the memempty case
+    metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams s allocator} >|]
     -- static member definition for method metadata
     staticDef m = [lt|
-    #{template s}const ::bond::Metadata #{className s}::Schema::s_#{methodName m}_metadata
+    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{methodName m}_metadata
         = ::bond::reflection::MetadataInit("#{methodName m}"#{attributes $ methodAttributes m}|]
       where
         attributes [] = [lt|);|]
         attributes a = [lt|,
                 #{attributeInit a});|]
-schemaMetadata _ _ = error "schemaMetadata: impossible happened."
+schemaMetadata _ _ _ = error "schemaMetadata: impossible happened."
 
 enumDefinition :: Declaration -> Text
 enumDefinition Enum {..} = [lt|enum #{declName}
