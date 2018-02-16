@@ -19,7 +19,7 @@ function (add_gradle_build target)
     add_custom_command (
         DEPENDS gbc
         COMMAND
-        ${GRADLE_EXECUTABLE} --console plain ${arg_GRADLE_TARGET}
+        ${GRADLE_EXECUTABLE} --info --console plain ${arg_GRADLE_TARGET}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/build/java/${target})
 
