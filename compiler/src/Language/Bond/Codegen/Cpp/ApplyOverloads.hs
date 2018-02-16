@@ -5,6 +5,7 @@
 
 module Language.Bond.Codegen.Cpp.ApplyOverloads (applyOverloads, Protocol(..)) where
 
+import Data.Maybe
 import Data.Monoid
 import Prelude
 import Data.Text.Lazy (Text)
@@ -12,6 +13,7 @@ import Text.Shakespeare.Text
 import Language.Bond.Syntax.Types
 import Language.Bond.Codegen.TypeMapping
 import Language.Bond.Codegen.Util
+import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Protocol data type is used to specify what protocols the @Apply@ function
 -- overloads should be generated for.
@@ -21,11 +23,11 @@ data Protocol =
 
 
 -- Apply overloads
-applyOverloads :: [Protocol] -> MappingContext -> Text -> Text -> Declaration -> Text
-applyOverloads protocols cpp attr extern s@Struct {..} | null declParams = [lt|
+applyOverloads :: [Protocol] -> MappingContext -> Text -> Text -> Maybe String -> Bool -> Declaration -> Text
+applyOverloads protocols cpp attr extern allocator allocator_concept s@Struct {..} | null declParams = [lt|
     //
     // Extern template specializations of Apply function with common
-    // transforms for #{declName}.
+    // transforms for #{declName}#{allocatorNote}.
     //
 
     #{extern}template #{attr}
@@ -41,7 +43,9 @@ applyOverloads protocols cpp attr extern s@Struct {..} | null declParams = [lt|
                const ::bond::bonded< #{qualifiedName}, ::bond::SimpleBinaryReader< ::bond::InputBuffer>&>& value);
     #{newlineSep 1 applyOverloads' protocols}|]
   where
-    qualifiedName = getDeclTypeName cpp s
+    defaultAllocator = CPP.defaultAllocator allocator_concept allocator
+    qualifiedName = CPP.qualifiedClassName cpp s defaultAllocator
+    allocatorNote = if allocator_concept then [lt| for the default allocator type, #{fromJust defaultAllocator}|] else mempty
 
     applyOverloads' p = [lt|#{deserialization p}#{newlineSep 1 (serialization p) serializingTransforms}|]
 
@@ -77,4 +81,4 @@ applyOverloads protocols cpp attr extern s@Struct {..} | null declParams = [lt|
     bool Apply(const ::bond::#{transform}<#{protocolWriter} >& transform,
                const ::bond::bonded< #{qualifiedName}, #{protocolReader}&>& value);|]
 
-applyOverloads _ _ _ _ _ = mempty
+applyOverloads _ _ _ _ _ _ _ = mempty

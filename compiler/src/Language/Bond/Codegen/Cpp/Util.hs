@@ -19,6 +19,8 @@ module Language.Bond.Codegen.Cpp.Util
     , isEnumDeclaration
     , enumValueToNameInitList
     , enumNameToValueInitList
+    , allocatorTemplateName
+    , defaultAllocator
     ) where
 
 import Data.Int (Int64)
@@ -195,3 +197,12 @@ enumNameToValueInitList n Enum {..} = commaLineSep n nameValueConst enumConstByN
     nameValueConst Constant {..} = [lt|{ "#{constantName}", #{constantName} }|]
     enumConstByName = sortOn constantName enumConstants
 enumNameToValueInitList _ _ = error "enumNameToValueInitList: impossible happened."
+
+allocatorTemplateName :: Bool -> Maybe String
+allocatorTemplateName False = Nothing
+allocatorTemplateName True = Just "_Alloc"
+
+defaultAllocator  :: Bool -> Maybe String -> Maybe String
+defaultAllocator True Nothing = Just "std::allocator<void*>"
+defaultAllocator True allocator = allocator
+defaultAllocator False _ = Nothing

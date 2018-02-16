@@ -15,14 +15,16 @@ import Language.Bond.Codegen.Cpp.ApplyOverloads
 -- | Codegen template for generating /base_name/_apply.cpp containing
 -- definitions of the @Apply@ function overloads for the specified protocols.
 apply_cpp :: [Protocol]   -- ^ List of protocols for which @Apply@ overloads should be generated
+          -> Maybe String -- ^ optional custom allocator to be used in the generated code
+          -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
           -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-apply_cpp protocols cpp file _imports declarations = ("_apply.cpp", [lt|
+apply_cpp protocols  allocator allocator_concept cpp file _imports declarations = ("_apply.cpp", [lt|
 #include "#{file}_apply.h"
 #include "#{file}_reflection.h"
 
 namespace bond
 {
-    #{newlineSepEnd 1 (applyOverloads protocols cpp attr extern) declarations}
+    #{newlineSepEnd 1 (applyOverloads protocols cpp attr extern allocator allocator_concept) declarations}
 } // namespace bond
 |])
   where

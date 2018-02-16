@@ -104,8 +104,8 @@ cppCodegen options@Cpp {..} = do
           reflection_h export_attribute
         , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
         , types_cpp
-        , apply_h applyProto export_attribute
-        , apply_cpp applyProto
+        , apply_h applyProto export_attribute allocator allocator_concept
+        , apply_cpp applyProto allocator allocator_concept
         ] <>
         [ enum_h | enum_header]
 cppCodegen _ = error "cppCodegen: impossible happened."

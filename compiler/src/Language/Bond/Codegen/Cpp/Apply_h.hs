@@ -20,8 +20,10 @@ import Language.Bond.Codegen.Cpp.ApplyOverloads
 -- function overloads for the specified protocols.
 apply_h :: [Protocol]   -- ^ List of protocols for which @Apply@ overloads should be generated
         -> Maybe String -- ^ Optional attribute to decorate the @Apply@ function declarations
+        -> Maybe String -- ^ optional custom allocator to be used in the generated code
+        -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
         -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-apply_h protocols export_attribute cpp file imports declarations = ("_apply.h", [lt|
+apply_h protocols export_attribute allocator allocator_concept cpp file imports declarations = ("_apply.h", [lt|
 #pragma once
 
 #include "#{file}_types.h"
@@ -31,7 +33,7 @@ apply_h protocols export_attribute cpp file imports declarations = ("_apply.h", 
 
 namespace bond
 {
-    #{newlineSepEnd 1 (applyOverloads protocols cpp export_attr extern) declarations}
+    #{newlineSepEnd 1 (applyOverloads protocols cpp export_attr extern allocator allocator_concept) declarations}
 } // namespace bond
 |])
   where

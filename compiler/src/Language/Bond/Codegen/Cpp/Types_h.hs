@@ -49,23 +49,23 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
 
 #include <bond/core/config.h>
 #include <bond/core/containers.h>
-#{memoryInclude}
 #{newlineSep 0 optionalHeader bondHeaders}
+#{memoryInclude}
 #{includeEnum}
 #{newlineSepEnd 0 includeImport imports}
 #{CPP.openNamespace cpp}
     #{doubleLineSepEnd 1 id $ catMaybes $ aliasDeclarations}#{doubleLineSep 1 typeDeclaration declarations}
 #{CPP.closeNamespace cpp}
-#{optional usesAllocatorSpecialization allocatorType}
+#{optional usesAllocatorSpecialization allocationMadeWith}
+
 |])
   where
-    allocatorType = if allocator_concept then Just "_Alloc" else allocator
-    allocatorDefaultType = if allocator_concept then
-         if isJust allocator then allocator else Just "std::allocator<void*>"
-         else Nothing
+    allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
+    allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+    allocationMadeWith = if allocator_concept then allocatorTemplateName else allocator
 
     aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
-    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a allocatorType}using #{declName} = #{getAliasDeclTypeName cpp a};|]
+    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a allocatorTemplateName}using #{declName} = #{getAliasDeclTypeName cpp a};|]
     aliasDeclName _ = Nothing
 
     hexVersion (Version xs _) = foldr showHex "" xs
@@ -121,7 +121,7 @@ namespace std
 |]
       where
         usesAllocator s@Struct {..} = [lt|template <typename _Alloc#{sepBeginBy ", typename " paramName declParams}>
-    struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{CPP.classParams s allocatorType}, _Alloc>
+    struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{CPP.classParams s allocatorTemplateName}, _Alloc>
         : is_convertible<_Alloc, #{allocParam}>
     {};|]
           where
@@ -130,7 +130,7 @@ namespace std
         usesAllocator _ = mempty
 
     -- forward declaration
-    typeDeclaration f@Forward {..} = [lt|#{CPP.template f allocatorType}struct #{declName};|]
+    typeDeclaration f@Forward {..} = [lt|#{CPP.template f allocatorTemplateName}struct #{declName};|]
 
     -- struct definition
     typeDeclaration s@Struct {..} = [lt|
@@ -138,9 +138,9 @@ namespace std
     {
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
 
-        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocatorType) mempty}
-        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocatorType) mempty}
-        #{optional allocatorCtor allocatorType}
+        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocationMadeWith) mempty}
+        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocationMadeWith) mempty}
+        #{optional allocatorCtor allocationMadeWith}
         #{assignmentOp}
 
         bool operator==(const #{declName}&#{otherParam}) const
@@ -170,7 +170,7 @@ namespace std
     }|]
       where
         template = CPP.template s allocatorDefaultType
-        qualifiedClassName = CPP.qualifiedClassName cpp s allocatorType
+        qualifiedClassName = CPP.qualifiedClassName cpp s allocatorTemplateName
 
         fieldNames :: [String]
         fieldNames = foldMapStructFields (return . fieldName) s
@@ -181,10 +181,9 @@ namespace std
         hasMetaFields = getAny $ foldMapStructFields metaField s
 
         base (BT_UserDefined d _) = [lt|
-      : #{CPP.qualifiedClassName cpp d allocatorType}|]
+      : #{CPP.qualifiedClassName cpp d allocatorTemplateName}|]
         base x = [lt|
       : #{cppType x}|]
-
 
         field Field {..} = [lt|#{cppType fieldType} #{fieldName};|]
 
@@ -237,7 +236,7 @@ namespace std
         defaultCtor = [lt|
         #{dummyTemplateTag}#{declName}(#{vc12WorkaroundParam})#{initList}#{ctorBody}|]
           where
-            needAllocParam = maybe False needAlloc allocatorType
+            needAllocParam = maybe False needAlloc allocationMadeWith
 
             vc12WorkaroundParam = if needAllocParam then [lt|_bond_vc12_ctor_workaround_ = {}|] else mempty
 
@@ -270,7 +269,7 @@ namespace std
             allocInitValue (BT_Nullable t) _ = allocInitValue t Nothing
             allocInitValue (BT_Maybe t) _ = allocInitValue t Nothing
             allocInitValue t (Just d)
-                | isString t = Just [lt|#{cppDefaultValue t d}, allocatorType|]
+                | isString t = Just [lt|#{cppDefaultValue t d}, allocatorTemplateName|]
             allocInitValue t Nothing
                 | isContainer t || isMetaName t || isString t || isStruct t = Just "allocator"
             allocInitValue t d = initValue t d
@@ -300,12 +299,12 @@ namespace std
 
         #{declName}(#{otherParamDecl declName}#{otherParam}, const #{alloc}&#{allocParam})#{initList}#{ctorBody}|]
           where
-            allocParam = if needAlloc alloc then [lt| allocatorType|] else mempty
+            allocParam = if needAlloc alloc then [lt| allocatorTemplateName|] else mempty
 
             initList = initializeList
                 (optional baseInit structBase)
                 (commaLineSep 3 fieldInit structFields)
-            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocatorType)|]
+            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocatorTemplateName)|]
 
             fieldRef fieldName = [lt|#{otherParamName}.#{fieldName}|]
             fieldInit Field {..} = [lt|#{fieldName}(#{otherParamValue $ fieldRef fieldName}#{allocInitValueText fieldType})|]
@@ -318,7 +317,7 @@ namespace std
             allocInitValue (BT_Nullable t) = allocInitValue t
             allocInitValue (BT_Maybe t) = allocInitValue t
             allocInitValue t
-                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocatorType|]
+                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocatorTemplateName|]
                 | otherwise = Nothing
 
         -- copy constructor with allocator
