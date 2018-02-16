@@ -101,9 +101,9 @@ cppCodegen options@Cpp {..} = do
                         , (grpc_enabled, [grpc_h export_attribute, grpc_cpp])
                         ]
     core_files = [
-          reflection_h export_attribute
+          reflection_h export_attribute allocator allocator_concept
         , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
-        , types_cpp
+        , types_cpp allocator_concept
         , apply_h applyProto export_attribute allocator allocator_concept
         , apply_cpp applyProto allocator allocator_concept
         ] <>

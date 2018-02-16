@@ -16,8 +16,9 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_types.cpp containing
 -- definitions of helper functions and schema metadata static variables.
-types_cpp :: MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-types_cpp cpp file _imports declarations = ("_types.cpp", [lt|
+types_cpp :: Bool         -- ^ 'True' to use use the allocator concept in the generated type
+    -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
+types_cpp allocator_concept cpp file _imports declarations = ("_types.cpp", [lt|
 #include "#{file}_reflection.h"
 #include <bond/core/exception.h>
 #{unorderedMapInclude}
@@ -31,8 +32,7 @@ types_cpp cpp file _imports declarations = ("_types.cpp", [lt|
 
     -- definitions of Schema statics for non-generic structs
     statics s@Struct {..} =
-        -- TODO
-        if null declParams then CPP.schemaMetadata cpp s Nothing else mempty
+        if null declParams && not allocator_concept then CPP.schemaMetadata cpp s Nothing else mempty
 
     -- global variables for enum name/value conversions
     --

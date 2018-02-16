@@ -19,8 +19,8 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_reflection.h containing schema
 -- metadata definitions.
-reflection_h :: Maybe String -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-reflection_h export_attribute cpp file imports declarations = ("_reflection.h", [lt|
+reflection_h :: Maybe String -> Maybe String -> Bool -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
+reflection_h export_attribute allocator allocator_concept cpp file imports declarations = ("_reflection.h", [lt|
 #pragma once
 
 #include "#{file}_types.h"
@@ -43,7 +43,7 @@ reflection_h export_attribute cpp file imports declarations = ("_reflection.h", 
     schema s@Struct {..} = [lt|//
     // #{declName}
     //
-    #{CPP.template s Nothing}struct #{className}::Schema
+    #{CPP.template s allocatorDefaultType}struct #{className}::Schema
     {
         typedef #{baseType structBase} base;
 
@@ -58,7 +58,6 @@ reflection_h export_attribute cpp file imports declarations = ("_reflection.h", 
 
         public: typedef #{typename}fields#{length structFields}::type fields;
         #{constructor}
-        
         static ::bond::Metadata GetMetadata()
         {
             return ::bond::reflection::MetadataInit#{metadataInitArgs}("#{declName}", "#{getDeclTypeName idl s}",
@@ -66,24 +65,25 @@ reflection_h export_attribute cpp file imports declarations = ("_reflection.h", 
             );
         }
     };
-    -- TODO here
-    #{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}|]
+    #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}|]
       where
-        -- TODO here
-        classParams = CPP.classParams s Nothing
+        allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
+        allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
 
-        -- TODO here
-        className = CPP.className s Nothing
+        classParams = CPP.classParams s allocatorTemplateName
+        className = CPP.className s allocatorTemplateName
 
         export_attr = onlyNonTemplate $ optional (\a -> [lt|#{a}
         |]) export_attribute
 
-        onlyTemplate x = if null declParams then mempty else x
-        onlyNonTemplate x = if null declParams then x else mempty
+        needsTemplate = (not $ null declParams) || allocator_concept
+        onlyTemplate x = if needsTemplate then x else mempty
+        onlyNonTemplate x = if not needsTemplate then x else mempty
+        onlyParams x = if null declParams then mempty else x
 
-        metadataInitArgs = onlyTemplate [lt|<boost::mpl::list#{classParams} >|]
+        metadataInitArgs = onlyParams [lt|<boost::mpl::list#{classParams} >|]
 
-        typename = onlyTemplate [lt|typename |]
+        typename = onlyParams [lt|typename |]
 
         -- constructor, generated only for struct templates
         constructor = onlyTemplate [lt|
