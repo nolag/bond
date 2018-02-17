@@ -21,8 +21,11 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_grpc.h containing declarations of
 -- of service interface and proxy.
-grpc_h :: Maybe String -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
-grpc_h export_attribute cpp file imports declarations = ("_grpc.h", [lt|
+grpc_h :: Maybe String
+    -> Maybe String -- ^ optional custom allocator to be used in the generated code
+    -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
+    -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
+grpc_h export_attribute allocator allocator_concept cpp file imports declarations = ("_grpc.h", [lt|
 #pragma once
 
 #include "#{file}_reflection.h"
@@ -174,15 +177,15 @@ inline #{className}::#{proxyName}<TThreadPool>::#{proxyName}(
 
     #{constructor}
 };
--- TODO
-#{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}
+
+#{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}
 |]
       where
-        -- TODO here
-        className = CPP.className s Nothing
-        -- TODO
-        template = CPP.template s Nothing
-        onlyTemplate x = if null declParams then mempty else x
+        allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
+        allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+        className = CPP.className s allocatorTemplateName
+        template = CPP.template s False allocatorDefaultType
+        onlyTemplate = CPP.onlyTemplate declParams allocator_concept
         typename = onlyTemplate [lt|typename |]
 
         export_attr = optional (\a -> [lt|#{a}

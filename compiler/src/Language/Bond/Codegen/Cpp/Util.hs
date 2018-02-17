@@ -20,7 +20,11 @@ module Language.Bond.Codegen.Cpp.Util
     , enumValueToNameInitList
     , enumNameToValueInitList
     , allocatorTemplateName
+    , allocatorTypeName
     , defaultAllocator
+    , needsTemplate
+    , onlyTemplate
+    , onlyNonTemplate
     ) where
 
 import Data.Int (Int64)
@@ -50,7 +54,7 @@ closeNamespace cpp = newlineSep 0 close (reverse $ getNamespace cpp)
     close n = [lt|} // namespace #{n}|]
 
 className :: Declaration -> Maybe String -> String
-className decl allocator= declName decl <> classParams decl allocator
+className decl allocator = declName decl <> classParams decl allocator
 
 classParamsRaw :: Declaration -> String
 classParamsRaw = sepBy ", " paramName . declParams
@@ -72,12 +76,16 @@ templateParams d = if null $ declParams d then mempty else params
     where
         params = concat ["typename ", sepBy ", typename " paramName $ declParams d]
 
-template :: Declaration -> Maybe String -> Text
-template d (Just allocator) =  [lt|template <#{templateParams d}#{optComma}class _Alloc=#{allocator}>
+
+fillTemplateDefault :: Bool -> String -> Text
+fillTemplateDefault declared_here allocator = if declared_here then [lt|=#{allocator}|] else mempty
+
+template :: Declaration -> Bool -> Maybe String -> Text
+template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}class _Alloc#{fillTemplateDefault declared_here allocator}>
     |]
     where
         optComma = if null $ declParams d then mempty else [lt|, |]
-template d Nothing = if null $ declParams d then mempty else [lt|template <#{templateParams d}>
+template d _ Nothing = if null $ declParams d then mempty else [lt|template <#{templateParams d}>
     |]
     
 -- attribute initializer
@@ -129,16 +137,16 @@ enumValue _ _ _ = error "enumValue: impossible happened."
 -- schema metadata static member definitions
 schemaMetadata :: MappingContext -> Declaration -> Maybe String -> Text
 schemaMetadata cpp s@Struct {..} allocator = [lt|
-    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
+    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
         = #{className s allocator}::Schema::GetMetadata();#{newlineBeginSep 1 staticDef structFields}|]
   where
     -- static member definition for field metadata
     staticDef f@Field {..}
         | fieldModifier == Optional && null fieldAttributes = [lt|
-    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
+    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}");|]
         | otherwise = [lt|
-    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
+    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}", #{modifierTag f}::value,
                 #{attributeInit fieldAttributes});|]
       where
@@ -150,7 +158,7 @@ schemaMetadata cpp s@Struct {..} allocator = [lt|
         explicitDefault d = defaultValue cpp fieldType d
         staticCast d = [lt|static_cast<#{getTypeName cpp fieldType}>(#{defaultValue cpp fieldType d})|]
 schemaMetadata _ s@Service {..} allocator = [lt|
-    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
+    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
         = ::bond::reflection::MetadataInit#{metadataInitArgs}("#{declName}", "#{idlNamespace}",
                 #{attributeInit declAttributes});#{newlineBeginSep 1 staticDef serviceMethods}|]
   where
@@ -160,7 +168,7 @@ schemaMetadata _ s@Service {..} allocator = [lt|
     metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams s allocator} >|]
     -- static member definition for method metadata
     staticDef m = [lt|
-    #{template s Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{methodName m}_metadata
+    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{methodName m}_metadata
         = ::bond::reflection::MetadataInit("#{methodName m}"#{attributes $ methodAttributes m}|]
       where
         attributes [] = [lt|);|]
@@ -202,7 +210,20 @@ allocatorTemplateName :: Bool -> Maybe String
 allocatorTemplateName False = Nothing
 allocatorTemplateName True = Just "_Alloc"
 
+allocatorTypeName :: Bool -> Maybe String
+allocatorTypeName False = Nothing
+allocatorTypeName True = Just "_TAlloc"
+
 defaultAllocator  :: Bool -> Maybe String -> Maybe String
-defaultAllocator True Nothing = Just "std::allocator<void*>"
+defaultAllocator True Nothing = Just "std::allocator"
 defaultAllocator True allocator = allocator
 defaultAllocator False _ = Nothing
+
+needsTemplate :: [a] -> Bool -> Bool
+needsTemplate declParams allocator_concept = (not $ null declParams) || allocator_concept
+
+onlyTemplate :: [a] -> Bool -> Text -> Text
+onlyTemplate declParams allocator_concept x = if needsTemplate declParams allocator_concept then x else mempty
+
+onlyNonTemplate :: [a] -> Bool -> Text -> Text
+onlyNonTemplate declParams allocator_concept x = if not $ needsTemplate declParams allocator_concept then x else mempty

@@ -172,7 +172,7 @@ comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
       where
         -- TODO here
         className = CPP.className s Nothing
-        template = CPP.template s Nothing
+        template = CPP.template s False Nothing
         onlyTemplate x = if null declParams then mempty else x
         typename = onlyTemplate [lt|typename |]
 

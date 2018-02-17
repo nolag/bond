@@ -43,7 +43,7 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
     schema s@Struct {..} = [lt|//
     // #{declName}
     //
-    #{CPP.template s allocatorDefaultType}struct #{className}::Schema
+    #{CPP.template s False allocatorDefaultType}struct #{className}::Schema
     {
         typedef #{baseType structBase} base;
 
@@ -72,13 +72,10 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
 
         classParams = CPP.classParams s allocatorTemplateName
         className = CPP.className s allocatorTemplateName
-
-        export_attr = onlyNonTemplate $ optional (\a -> [lt|#{a}
+        onlyTemplate = CPP.onlyTemplate declParams allocator_concept
+        export_attr = CPP.onlyNonTemplate declParams allocator_concept $ optional (\a -> [lt|#{a}
         |]) export_attribute
 
-        needsTemplate = (not $ null declParams) || allocator_concept
-        onlyTemplate x = if needsTemplate then x else mempty
-        onlyNonTemplate x = if not needsTemplate then x else mempty
         onlyParams x = if null declParams then mempty else x
 
         metadataInitArgs = onlyParams [lt|<boost::mpl::list#{classParams} >|]

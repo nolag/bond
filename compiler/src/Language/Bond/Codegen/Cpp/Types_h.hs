@@ -65,7 +65,7 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     allocationMadeWith = if allocator_concept then allocatorTemplateName else allocator
 
     aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
-    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a allocatorTemplateName}using #{declName} = #{getAliasDeclTypeName cpp a};|]
+    aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a False allocatorTemplateName}using #{declName} = #{getAliasDeclTypeName cpp a};|]
     aliasDeclName _ = Nothing
 
     hexVersion (Version xs _) = foldr showHex "" xs
@@ -130,14 +130,14 @@ namespace std
         usesAllocator _ = mempty
 
     -- forward declaration
-    typeDeclaration f@Forward {..} = [lt|#{CPP.template f allocatorTemplateName}struct #{declName};|]
+    typeDeclaration f@Forward {..} = [lt|#{CPP.template f False allocatorTemplateName}struct #{declName};|]
 
     -- struct definition
     typeDeclaration s@Struct {..} = [lt|
     #{template}struct #{declName}#{optional base structBase}
     {
+        #{thisTypesAllocator}
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
-
         #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocationMadeWith) mempty}
         #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocationMadeWith) mempty}
         #{optional allocatorCtor allocationMadeWith}
@@ -169,8 +169,9 @@ namespace std
         #{leftParamName}.swap(#{rightParamName});
     }|]
       where
-        template = CPP.template s allocatorDefaultType
         qualifiedClassName = CPP.qualifiedClassName cpp s allocatorTemplateName
+        thisTypesAllocator = if allocator_concept then [lt|typedef _Alloc<#{qualifiedClassName}> _TAlloc|] else mempty;
+        template = CPP.template s True allocatorDefaultType
 
         fieldNames :: [String]
         fieldNames = foldMapStructFields (return . fieldName) s
@@ -181,7 +182,7 @@ namespace std
         hasMetaFields = getAny $ foldMapStructFields metaField s
 
         base (BT_UserDefined d _) = [lt|
-      : #{CPP.qualifiedClassName cpp d allocatorTemplateName}|]
+      : #{CPP.qualifiedClassName cpp d allocatorTemplateName}|] 
         base x = [lt|
       : #{cppType x}|]
 
@@ -269,7 +270,7 @@ namespace std
             allocInitValue (BT_Nullable t) _ = allocInitValue t Nothing
             allocInitValue (BT_Maybe t) _ = allocInitValue t Nothing
             allocInitValue t (Just d)
-                | isString t = Just [lt|#{cppDefaultValue t d}, allocatorTemplateName|]
+                | isString t = Just [lt|#{cppDefaultValue t d}, allocator|]
             allocInitValue t Nothing
                 | isContainer t || isMetaName t || isString t || isStruct t = Just "allocator"
             allocInitValue t d = initValue t d
@@ -299,7 +300,7 @@ namespace std
 
         #{declName}(#{otherParamDecl declName}#{otherParam}, const #{alloc}&#{allocParam})#{initList}#{ctorBody}|]
           where
-            allocParam = if needAlloc alloc then [lt| allocatorTemplateName|] else mempty
+            allocParam = if needAlloc alloc then [lt| allocator|] else mempty
 
             initList = initializeList
                 (optional baseInit structBase)
