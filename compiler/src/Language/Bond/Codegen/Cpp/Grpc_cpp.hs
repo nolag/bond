@@ -16,8 +16,9 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_grpc.cpp containing
 -- definitions of helper functions and schema metadata static variables.
-grpc_cpp :: MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-grpc_cpp cpp file _imports declarations = ("_grpc.cpp", [lt|
+grpc_cpp :: Bool         -- ^ 'True' to use use the allocator concept in the generated type
+        -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
+grpc_cpp allocator_concept cpp file _imports declarations = ("_grpc.cpp", [lt|
 #include "#{file}_reflection.h"
 #include "#{file}_grpc.h"
 
@@ -28,7 +29,6 @@ grpc_cpp cpp file _imports declarations = ("_grpc.cpp", [lt|
   where
     -- definitions of Schema statics for non-generic services
     statics s@Service {..} =
-        -- TODO 
-        if null declParams then CPP.schemaMetadata cpp s Nothing else mempty
+        if CPP.needsTemplate declParams allocator_concept then mempty else CPP.schemaMetadata cpp s Nothing
 
     statics _ = mempty

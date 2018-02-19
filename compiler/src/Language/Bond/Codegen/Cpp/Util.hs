@@ -78,7 +78,8 @@ templateParams d = if null $ declParams d then mempty else params
 
 
 fillTemplateDefault :: Bool -> String -> Text
-fillTemplateDefault declared_here allocator = if declared_here then [lt|=#{allocator}|] else mempty
+fillTemplateDefault True allocator =  [lt|=#{allocator}|]
+fillTemplateDefault False _ = mempty
 
 template :: Declaration -> Bool -> Maybe String -> Text
 template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}class _Alloc#{fillTemplateDefault declared_here allocator}>
@@ -137,16 +138,16 @@ enumValue _ _ _ = error "enumValue: impossible happened."
 -- schema metadata static member definitions
 schemaMetadata :: MappingContext -> Declaration -> Maybe String -> Text
 schemaMetadata cpp s@Struct {..} allocator = [lt|
-    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
+    #{template s False allocator}const ::bond::Metadata #{className s allocator}::Schema::metadata
         = #{className s allocator}::Schema::GetMetadata();#{newlineBeginSep 1 staticDef structFields}|]
   where
     -- static member definition for field metadata
     staticDef f@Field {..}
         | fieldModifier == Optional && null fieldAttributes = [lt|
-    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
+    #{template s False allocator}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}");|]
         | otherwise = [lt|
-    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
+    #{template s False allocator}const ::bond::Metadata #{className s allocator}::Schema::s_#{fieldName}_metadata
         = ::bond::reflection::MetadataInit(#{defaultInit f}"#{fieldName}", #{modifierTag f}::value,
                 #{attributeInit fieldAttributes});|]
       where
@@ -158,17 +159,16 @@ schemaMetadata cpp s@Struct {..} allocator = [lt|
         explicitDefault d = defaultValue cpp fieldType d
         staticCast d = [lt|static_cast<#{getTypeName cpp fieldType}>(#{defaultValue cpp fieldType d})|]
 schemaMetadata _ s@Service {..} allocator = [lt|
-    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::metadata
+    #{template s False allocator}const ::bond::Metadata #{className s allocator}::Schema::metadata
         = ::bond::reflection::MetadataInit#{metadataInitArgs}("#{declName}", "#{idlNamespace}",
                 #{attributeInit declAttributes});#{newlineBeginSep 1 staticDef serviceMethods}|]
   where
     idl = MappingContext idlTypeMapping [] [] []
     idlNamespace = getDeclTypeName idl s
-    -- TODO ? for the memempty case
     metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams s allocator} >|]
     -- static member definition for method metadata
     staticDef m = [lt|
-    #{template s False Nothing}const ::bond::Metadata #{className s allocator}::Schema::s_#{methodName m}_metadata
+    #{template s False allocator}const ::bond::Metadata #{className s allocator}::Schema::s_#{methodName m}_metadata
         = ::bond::reflection::MetadataInit("#{methodName m}"#{attributes $ methodAttributes m}|]
       where
         attributes [] = [lt|);|]

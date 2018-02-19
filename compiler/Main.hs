@@ -78,10 +78,11 @@ writeSchema _ = error "writeSchema: impossible happened."
 
 cppCodegen :: Options -> IO()
 cppCodegen options@Cpp {..} = do
-
     let allocatorType = if allocator_concept then Just "_TAlloc" else allocator
-    let allocatorTemplate = if allocator_concept then Just "_Alloc" else allocator
-    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled (fromJust allocatorType)) allocatorTemplate
+    let allocatorTemplate = if allocator_concept then "_Alloc" else []
+
+    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocatorTemplate)  allocatorType 
+    
     let typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
     concurrentlyFor_ files $ codeGen options typeMapping templates
   where
@@ -99,7 +100,7 @@ cppCodegen options@Cpp {..} = do
     templates = concat $ map snd $ filter fst codegen_templates
     codegen_templates = [ (core_enabled, core_files)
                         , (comm_enabled, [comm_h export_attribute, comm_cpp])
-                        , (grpc_enabled, [grpc_h export_attribute allocator allocator_concept, grpc_cpp])
+                        , (grpc_enabled, [grpc_h export_attribute allocator allocator_concept, grpc_cpp allocator_concept])
                         ]
     core_files = [
           reflection_h export_attribute allocator allocator_concept
