@@ -16,8 +16,9 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_comm.cpp containing
 -- definitions of helper functions and schema metadata static variables.
-comm_cpp :: MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-comm_cpp cpp file _imports declarations = ("_comm.cpp", [lt|
+comm_cpp :: Bool         -- ^ 'True' to use use the allocator concept in the generated type
+    -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
+comm_cpp allocator_concept cpp file _imports declarations = ("_comm.cpp", [lt|
 #include "#{file}_reflection.h"
 #include "#{file}_comm.h"
 
@@ -28,7 +29,6 @@ comm_cpp cpp file _imports declarations = ("_comm.cpp", [lt|
   where
     -- definitions of Schema statics for non-generic services
     statics s@Service {..} =
-        -- TODO
-        if null declParams then CPP.schemaMetadata cpp s Nothing else mempty
+        CPP.onlyNonTemplate declParams allocator_concept $ CPP.schemaMetadata cpp s Nothing
 
     statics _ = mempty

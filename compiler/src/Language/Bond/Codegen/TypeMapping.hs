@@ -176,12 +176,12 @@ cppTypeMapping = TypeMapping
     cppTypeMapping
 
 -- | C++ type name mapping using a custom allocator.
-cppCustomAllocTypeMapping :: ToText a => ToText b => Bool -> a -> b -> TypeMapping
+cppCustomAllocTypeMapping :: ToText a => Bool -> String -> a -> TypeMapping
 cppCustomAllocTypeMapping scoped allocTemplate allocName = TypeMapping
     (Just Cpp)
     "::"
     "::"
-    (cppTypeCustomAlloc scoped (toText allocTemplate) (toText allocName))
+    (cppTypeCustomAlloc scoped allocTemplate (toText allocName))
     cppSyntaxFix
     (cppCustomAllocTypeMapping scoped allocTemplate allocName)
     (cppCustomAllocTypeMapping scoped allocTemplate allocName)
@@ -431,16 +431,17 @@ cppType (BT_TypeParam param) = pureText $ paramName param
 cppType (BT_UserDefined decl args) = declQualifiedTypeName decl <<>> (angles <$> commaSepTypeNames args)
 
 
-commaSepTypeNamesWithAllocator:: [Type] -> Builder -> TypeNameBuilder
-commaSepTypeNamesWithAllocator [] alloc = commaSepTypeNames [] <<> alloc
-commaSepTypeNamesWithAllocator args alloc =  (commaSepTypeNames args <<> ", ") <<> alloc
+commaSepTypeNamesWithAllocator:: [Type] -> String -> TypeNameBuilder
+commaSepTypeNamesWithAllocator args [] =  commaSepTypeNames args
+commaSepTypeNamesWithAllocator [] alloc = commaSepTypeNames [] <<> "TODO ALLOC?" -- alloc
+commaSepTypeNamesWithAllocator args alloc =  (commaSepTypeNames args <<> ", ") <<> "TODO alloc" -- alloc
 
 -- C++ type mapping with custom allocator
-cppTypeCustomAlloc :: Bool -> Builder -> Builder -> Type -> TypeNameBuilder
+cppTypeCustomAlloc :: Bool -> String -> Builder -> Type -> TypeNameBuilder
 cppTypeCustomAlloc scoped  _ allocName BT_String = "std::basic_string<char, std::char_traits<char>, " <>> rebindAllocator scoped allocName (pure "char") <<> " >"
 cppTypeCustomAlloc scoped  _ allocName BT_WString = "std::basic_string<wchar_t, std::char_traits<wchar_t>, " <>> rebindAllocator scoped allocName (pure "wchar_t") <<> " >"
-cppTypeCustomAlloc scoped allocTemplate allocName BT_MetaName = cppTypeCustomAlloc scoped allocName allocTemplate BT_String
-cppTypeCustomAlloc scoped  allocTemplate allocName BT_MetaFullName = cppTypeCustomAlloc scoped allocName allocTemplate BT_String
+cppTypeCustomAlloc scoped allocTemplate allocName BT_MetaName = cppTypeCustomAlloc scoped allocTemplate allocName BT_String
+cppTypeCustomAlloc scoped  allocTemplate allocName BT_MetaFullName = cppTypeCustomAlloc scoped allocTemplate allocName BT_String
 cppTypeCustomAlloc scoped _ allocName (BT_List element) = "std::list<" <>> elementTypeName element <<>> ", " <>> allocator scoped allocName element <<> ">"
 cppTypeCustomAlloc _ _ allocName (BT_Nullable element)
     | isStruct element = "::bond::nullable<" <>> elementTypeName element <<> ", " <> allocName <> ">"
@@ -448,7 +449,6 @@ cppTypeCustomAlloc _ _ allocName (BT_Nullable element)
 cppTypeCustomAlloc scoped _ allocName (BT_Vector element) = "std::vector<" <>> elementTypeName element <<>> ", " <>> allocator scoped allocName element <<> ">"
 cppTypeCustomAlloc scoped _ allocName (BT_Set element) = "std::set<" <>> elementTypeName element <<>> comparer element <<>> allocator scoped allocName element <<> ">"
 cppTypeCustomAlloc scoped _ allocName (BT_Map key value) = "std::map<" <>> elementTypeName key <<>> ", " <>> elementTypeName value <<>> comparer key <<>> pairAllocator scoped allocName key value <<> ">"
--- TODO bonded didn't work
 cppTypeCustomAlloc _  allocTemplate _ (BT_UserDefined decl args) = declQualifiedTypeName decl <<>> (angles <$> commaSepTypeNamesWithAllocator args allocTemplate)
 cppTypeCustomAlloc _ _ _ t = cppType t
 

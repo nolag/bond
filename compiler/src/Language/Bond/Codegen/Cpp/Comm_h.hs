@@ -21,8 +21,11 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 
 -- | Codegen template for generating /base_name/_comm.h containing declarations of
 -- of service interface and proxy.
-comm_h :: Maybe String -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
-comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
+comm_h ::  Maybe String 
+           -> Maybe String -- ^ optional custom allocator to be used in the generated code
+           -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
+           -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
+comm_h export_attribute allocator allocator_concept cpp file imports declarations = ("_comm.h", [lt|
 #pragma once
 
 #include <bond/comm/services.h>
@@ -88,8 +91,8 @@ comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
         public: typedef #{typename}methods#{length serviceMethods}::type methods;
         #{constructor}
     };
-    -- TODO
-    #{onlyTemplate $ CPP.schemaMetadata cpp s Nothing}
+
+    #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}
 
     #{template}class #{className}::Proxy
         : public #{className}
@@ -170,10 +173,12 @@ comm_h export_attribute cpp file imports declarations = ("_comm.h", [lt|
     };
     |]
       where
-        -- TODO here
-        className = CPP.className s Nothing
-        template = CPP.template s False Nothing
-        onlyTemplate x = if null declParams then mempty else x
+        allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
+        allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+
+        className = CPP.className s allocatorTemplateName
+        template = CPP.template s False allocatorDefaultType
+        onlyTemplate = CPP.onlyTemplate declParams allocator_concept
         typename = onlyTemplate [lt|typename |]
 
         export_attr = optional (\a -> [lt|#{a}

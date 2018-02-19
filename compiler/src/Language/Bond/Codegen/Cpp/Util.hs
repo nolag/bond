@@ -60,6 +60,7 @@ classParamsRaw :: Declaration -> String
 classParamsRaw = sepBy ", " paramName . declParams
 
 classParams :: Declaration -> Maybe String -> String
+classParams d (Just []) = classParams d Nothing
 classParams d (Just allocator) = angles $ concat [classParamsRaw d, optComma, allocator]
     where
         optComma = if null $ declParams d then "" else ", "
