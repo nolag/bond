@@ -433,8 +433,8 @@ cppType (BT_UserDefined decl args) = declQualifiedTypeName decl <<>> (angles <$>
 
 commaSepTypeNamesWithAllocator:: [Type] -> String -> TypeNameBuilder
 commaSepTypeNamesWithAllocator args [] =  commaSepTypeNames args
-commaSepTypeNamesWithAllocator [] alloc = commaSepTypeNames [] <<> "TODO ALLOC?" -- alloc
-commaSepTypeNamesWithAllocator args alloc =  (commaSepTypeNames args <<> ", ") <<> "TODO alloc" -- alloc
+commaSepTypeNamesWithAllocator [] alloc = commaSepTypeNames [] <<> toText alloc
+commaSepTypeNamesWithAllocator args alloc =  (commaSepTypeNames args <<> ", ") <<> toText alloc
 
 -- C++ type mapping with custom allocator
 cppTypeCustomAlloc :: Bool -> String -> Builder -> Type -> TypeNameBuilder
