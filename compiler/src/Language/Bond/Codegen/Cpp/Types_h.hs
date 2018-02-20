@@ -305,7 +305,7 @@ namespace std
             initList = initializeList
                 (optional baseInit structBase)
                 (commaLineSep 3 fieldInit structFields)
-            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocatorTemplateName)|]
+            baseInit b = [lt|#{cppType b}(#{otherParamValue $ L.pack otherParamName}, allocator)|]
 
             fieldRef fieldName = [lt|#{otherParamName}.#{fieldName}|]
             fieldInit Field {..} = [lt|#{fieldName}(#{otherParamValue $ fieldRef fieldName}#{allocInitValueText fieldType})|]
@@ -318,7 +318,7 @@ namespace std
             allocInitValue (BT_Nullable t) = allocInitValue t
             allocInitValue (BT_Maybe t) = allocInitValue t
             allocInitValue t
-                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocatorTemplateName|]
+                | isList t || isMetaName t || isString t || isStruct t || isAssociative t = Just [lt|allocator|]
                 | otherwise = Nothing
 
         -- copy constructor with allocator

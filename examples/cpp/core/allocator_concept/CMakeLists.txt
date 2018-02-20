@@ -5,5 +5,6 @@ add_bond_codegen (custom_allocator.bond
         --header=\\\"allocator.h\\\"
         --alloc-ctors)
 
-add_bond_test (custom_allocator
-	custom_allocator.cpp)
+add_bond_test (allocator_concept
+	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_types.cpp
+	allocator_concept.cpp)
