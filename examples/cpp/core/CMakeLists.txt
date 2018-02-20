@@ -1,4 +1,5 @@
 add_subdirectory (access_control)
+add_subdirectory (allocator_concept)
 add_subdirectory (attributes)
 add_subdirectory (bf)
 add_subdirectory (capped_allocator)

@@ -1,4 +1,4 @@
-#include "scoped_allocator_reflection.h"
+#include "allocator_concept_reflection.h"
 
 #include <bond/core/bond.h>
 #include <bond/stream/output_buffer.h>
@@ -41,10 +41,6 @@ int main()
     Deserialize(reader3, obj3);
 
     assert(obj == obj3);
-    
-    
-    // TODO remove make sure this test is actually run
-    assert(1 == 2);
     
     return 0;
 }

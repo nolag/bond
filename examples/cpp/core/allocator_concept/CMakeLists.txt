@@ -1,7 +1,7 @@
-add_bond_codegen (custom_allocator.bond
+add_bond_codegen (allocator_concept.bond
     OPTIONS 
-        --allocator_concept
-        --allocator=\"examples::custom_allocator::MyAllocator<char>\"
+        --allocator-concept
+        --allocator=\"examples::allocator_concept::MyAllocator\"
         --header=\\\"allocator.h\\\"
         --alloc-ctors)
 
