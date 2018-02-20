@@ -38,7 +38,7 @@ int main()
     // Types cannot be compared directly because the allocators are different, but items must be the same.  The easiest way to test this is to serialize and deserialize again
     
     Struct<MyAllocator> obj3{ alloc };
-    Deserialize(reader3, obj3);
+    Deserialize(reader2, obj3);
 
     assert(obj == obj3);
     
