@@ -61,7 +61,7 @@ classParamsRaw = sepBy ", " paramName . declParams
 
 classParams :: Declaration -> Maybe String -> String
 classParams d (Just []) = classParams d Nothing
-classParams d (Just allocator) = angles $ concat [classParamsRaw d, optComma, allocator]
+classParams d (Just allocator) = angles $ concat [classParamsRaw d, optComma, "typename ", allocator]
     where
         optComma = if null $ declParams d then "" else ", "
 classParams d Nothing = angles $ classParamsRaw d
@@ -83,7 +83,7 @@ fillTemplateDefault True allocator =  [lt|=#{allocator}|]
 fillTemplateDefault False _ = mempty
 
 template :: Declaration -> Bool -> Maybe String -> Text
-template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}template<template<typename> typename _Alloc>#{fillTemplateDefault declared_here allocator}>
+template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}template<typename> typename _Alloc#{fillTemplateDefault declared_here allocator}>
     |]
     where
         optComma = if null $ declParams d then mempty else [lt|, |]
@@ -213,7 +213,7 @@ allocatorTemplateName True = Just "_Alloc"
 
 allocatorTypeName :: Bool -> Maybe String
 allocatorTypeName False = Nothing
-allocatorTypeName True = Just "_TAlloc"
+allocatorTypeName True = Just "typename _TAlloc"
 
 defaultAllocator  :: Bool -> Maybe String -> Maybe String
 defaultAllocator True Nothing = Just "std::allocator"

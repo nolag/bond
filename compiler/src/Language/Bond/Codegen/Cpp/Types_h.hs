@@ -56,12 +56,13 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
 #{CPP.openNamespace cpp}
     #{doubleLineSepEnd 1 id $ catMaybes $ aliasDeclarations}#{doubleLineSep 1 typeDeclaration declarations}
 #{CPP.closeNamespace cpp}
-#{optional usesAllocatorSpecialization allocationMadeWith}
+#{optional usesAllocatorSpecialization allocationMadeWith }
 
 |])
   where
     allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
     allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+    allocatorTypeName = if allocator_concept then CPP.allocatorTypeName allocator_concept else allocator
     allocationMadeWith = if allocator_concept then allocatorTemplateName else allocator
 
     aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
@@ -116,18 +117,27 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     usesAllocatorSpecialization alloc = [lt|
 namespace std
 {
-    #{doubleLineSep 1 usesAllocator declarations}
+    #{doubleLineSep 1 (usesAllocator allocator_concept) declarations}
 }
 |]
       where
-        usesAllocator s@Struct {..} = [lt|template <typename _Alloc#{sepBeginBy ", typename " paramName declParams}>
-    struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{CPP.classParams s allocatorTemplateName}, _Alloc>
+        usesAllocator False s@Struct {..} = [lt|template <typename _Alloc#{sepBeginBy ", typename " paramName declParams}>
+        struct uses_allocator<#{typename} #{getDeclTypeName cpp s}#{classParams}, _Alloc>
         : is_convertible<_Alloc, #{allocParam}>
     {};|]
-          where
-            typename = if null declParams then mempty else [lt|typename|]
-            allocParam = if last alloc == '>' then alloc ++ " " else alloc
-        usesAllocator _ = mempty
+            where
+                typename = if null declParams then mempty else [lt|typename|]
+                allocParam = if last alloc == '>' then alloc ++ " " else alloc
+                classParams = CPP.classParams s allocatorTemplateName
+
+        usesAllocator True s@Struct {..} = [lt|template<template<typename> typename #{alloc}, template<typename> typename _Alloc2>
+        struct uses_allocator<#{getDeclTypeName cpp s}#{classParams}, _Alloc2>
+        : is_convertible<#{alloc}<#{getDeclTypeName cpp s}#{classParams}>, _Alloc2<#{getDeclTypeName cpp s}#{classParams}>>
+    {};|]
+            where
+                classParams = CPP.classParams s allocatorTemplateName
+
+        usesAllocator _ _ = mempty
 
     -- forward declaration
     typeDeclaration f@Forward {..} = [lt|#{CPP.template f False allocatorTemplateName}struct #{declName};|]
@@ -138,9 +148,9 @@ namespace std
     {
         #{thisTypesAllocator}
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
-        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocationMadeWith) mempty}
-        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocationMadeWith) mempty}
-        #{optional allocatorCtor allocationMadeWith}
+        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocatorTypeName) mempty}
+        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocatorTypeName) mempty}
+        #{optional allocatorCtor allocatorTypeName}
         #{assignmentOp}
 
         bool operator==(const #{declName}&#{otherParam}) const
@@ -170,7 +180,7 @@ namespace std
     }|]
       where
         qualifiedClassName = CPP.qualifiedClassName cpp s allocatorTemplateName
-        thisTypesAllocator = if allocator_concept then [lt|typedef _Alloc<#{qualifiedClassName}> _TAlloc|] else mempty;
+        thisTypesAllocator = if allocator_concept then [lt|typedef _Alloc<#{CPP.className s allocatorTemplateName}> _TAlloc;|] else mempty;
         template = CPP.template s True allocatorDefaultType
 
         fieldNames :: [String]
@@ -181,8 +191,6 @@ namespace std
         hasOnlyMetaFields = not (any (not . getAny . metaField) structFields) && isNothing structBase
         hasMetaFields = getAny $ foldMapStructFields metaField s
 
-        base (BT_UserDefined d _) = [lt|
-      : #{CPP.qualifiedClassName cpp d allocatorTemplateName}|] 
         base x = [lt|
       : #{cppType x}|]
 

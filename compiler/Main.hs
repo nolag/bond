@@ -78,7 +78,7 @@ writeSchema _ = error "writeSchema: impossible happened."
 
 cppCodegen :: Options -> IO()
 cppCodegen options@Cpp {..} = do
-    let allocatorType = if allocator_concept then Just "_TAlloc" else allocator
+    let allocatorType = if allocator_concept then Just "typename _TAlloc" else allocator
     let allocatorTemplate = if allocator_concept then "_Alloc" else []
 
     let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocatorTemplate)  allocatorType 
