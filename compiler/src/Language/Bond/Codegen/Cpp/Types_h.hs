@@ -130,13 +130,14 @@ namespace std
                 allocParam = if last alloc == '>' then alloc ++ " " else alloc
                 classParams = CPP.classParams s allocatorTemplateName
 
-        usesAllocator True s@Struct {..} = [lt|template<template<typename> typename #{alloc}, template<typename> typename _Alloc2>
-        struct uses_allocator<#{getDeclTypeName cpp s}#{classParams}, _Alloc2>
-        : is_convertible<#{alloc}<#{getDeclTypeName cpp s}#{classParams}>, _Alloc2<#{getDeclTypeName cpp s}#{classParams}>>
+        usesAllocator True s@Struct {..} = [lt|template<template<typename> typename #{alloc}, typename _Alloc2>
+        struct uses_allocator<#{className}, _Alloc2>
+        : is_convertible<typename _Alloc2, typename #{className}::_TAlloc >
     {};|]
             where
                 classParams = CPP.classParams s allocatorTemplateName
-
+                className = [lt|#{getDeclTypeName cpp s}#{classParams}|]
+                
         usesAllocator _ _ = mempty
 
     -- forward declaration

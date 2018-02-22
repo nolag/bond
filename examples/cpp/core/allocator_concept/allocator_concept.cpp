@@ -40,5 +40,7 @@ int main()
     Struct<MyAllocator> obj3{ alloc };
     Deserialize(reader2, obj3);
 
+    assert(obj == obj3);
+    
     return 0;
 }

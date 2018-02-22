@@ -78,7 +78,7 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
 
         onlyParams = CPP.onlyTemplate declParams allocator_concept
 
-        metadataInitArgs = onlyParams [lt|<boost::mpl::list#{classParams} >|]
+        metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams} >|]
 
         typename = onlyParams [lt|typename |]
 
