@@ -20,7 +20,6 @@ module Language.Bond.Codegen.Cpp.Util
     , enumValueToNameInitList
     , enumNameToValueInitList
     , allocatorTemplateName
-    , allocatorTypeName
     , defaultAllocator
     , needsTemplate
     , onlyTemplate
@@ -61,7 +60,7 @@ classParamsRaw = sepBy ", " paramName . declParams
 
 classParams :: Declaration -> Maybe String -> String
 classParams d (Just []) = classParams d Nothing
-classParams d (Just allocator) = angles $ concat [classParamsRaw d, optComma, "typename ", allocator]
+classParams d (Just allocator) = angles $ ((classParamsRaw d) ++ optComma ++ "typename " ++ allocator)
     where
         optComma = if null $ declParams d then "" else ", "
 classParams d Nothing = angles $ classParamsRaw d
@@ -75,7 +74,7 @@ qualifiedClassName _ _ _= error "qualifiedClassName: impossible happened."
 templateParams :: Declaration -> String
 templateParams d = if null $ declParams d then mempty else params
     where
-        params = concat ["typename ", sepBy ", typename " paramName $ declParams d]
+        params = "typename " ++ (sepBy ", typename " paramName $ declParams d)
 
 
 fillTemplateDefault :: Bool -> String -> Text
@@ -210,10 +209,6 @@ enumNameToValueInitList _ _ = error "enumNameToValueInitList: impossible happene
 allocatorTemplateName :: Bool -> Maybe String
 allocatorTemplateName False = Nothing
 allocatorTemplateName True = Just "_Alloc"
-
-allocatorTypeName :: Bool -> Maybe String
-allocatorTypeName False = Nothing
-allocatorTypeName True = Just "typename _TAlloc"
 
 defaultAllocator  :: Bool -> Maybe String -> Maybe String
 defaultAllocator True Nothing = Just "std::allocator"
