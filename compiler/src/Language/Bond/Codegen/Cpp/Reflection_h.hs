@@ -70,7 +70,8 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
         allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
         allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
 
-        classParams = CPP.classParams s allocatorTemplateName
+        -- The allocator template type should not be in the list as a template type
+        classParams = CPP.classParams s Nothing
         className = CPP.className s allocatorTemplateName
         onlyTemplate = CPP.onlyTemplate declParams allocator_concept
         export_attr = CPP.onlyNonTemplate declParams allocator_concept $ optional (\a -> [lt|#{a}

@@ -12,7 +12,9 @@ function (add_unit_test)
         unit_test_codegen1
         unit_test_codegen2
         unit_test_codegen3
-        unit_test_codegen4)
+        unit_test_codegen4
+        unit_test_codegen5
+        unit_test_codegen6)
     target_include_directories (${name} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
@@ -25,7 +27,6 @@ function (add_unit_test)
     target_link_libraries (${name} PRIVATE
       core_test_common)
 endfunction()
-
 
 # Build common code into its own library.
 add_library (core_test_common
@@ -44,13 +45,17 @@ add_library (core_test_common
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/scope_test2_types.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/cmdargs_types.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/unit_test_core_apply.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/capped_allocator_tests_generated/allocator_test_types.cpp")
+    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/capped_allocator_tests_generated/allocator_test_types.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_default_allocator_tests_generated/allocator_test_types.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_custom_allocator_tests_generated/allocator_test_types.cpp")
 add_target_to_folder (core_test_common)
 add_dependencies(core_test_common
     unit_test_codegen1
     unit_test_codegen2
     unit_test_codegen3
-    unit_test_codegen4)
+    unit_test_codegen4
+    unit_test_codegen5
+    unit_test_codegen6)
 target_include_directories (core_test_common PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
@@ -102,6 +107,25 @@ add_bond_codegen (TARGET unit_test_codegen4
         --header=\"<bond/core/capped_allocator.h>\"
         --allocator=\"bond::capped_allocator<>\"
         --namespace=\"allocator_test=capped_allocator_tests\")
+        
+add_bond_codegen (TARGET unit_test_codegen5
+    allocator_test.bond
+    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_default_allocator_tests_generated"
+    OPTIONS
+        --header=\\\"custom_protocols.h\\\"
+        --allocator-concept
+        --namespace=\"allocator_test=allocator_concept_default_allocator_tests_generated\")
+        
+
+add_bond_codegen (TARGET unit_test_codegen6
+    allocator_test.bond
+    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_custom_allocator_tests_generated"
+    OPTIONS
+        --header=\\\"custom_protocols.h\\\"
+        --header=\\\"allocators.h\\\"
+        --allocator=detail::TestAllocator
+        --allocator-concept
+        --namespace=\"allocator_test=allocator_concept_custom_allocator_tests_generated\")
 
 # Full unit test is too big, .pdb files exceed compiler limit;
 # Since debugging such large executable is not practical anyways,
@@ -111,6 +135,7 @@ no_pdb()
 
 
 add_unit_test (allocator_test.cpp)
+add_unit_test (allocator_concept_test.cpp)
 add_unit_test (apply_tests.cpp)
 add_unit_test (basic_tests.cpp)
 add_unit_test (basic_type_lists.cpp)

@@ -137,9 +137,9 @@ namespace std
                 alloc = fromJust (allocatorForClass $ className)
                 allocParam = if last alloc == '>' then alloc ++ " " else alloc
 
-        usesAllocator True s@Struct {..} = [lt|template<template<typename> typename _Alloc, typename _Alloc2>
-        struct uses_allocator<#{className}, _Alloc2>
-        : is_convertible<typename _Alloc2, typename #{alloc}>
+        usesAllocator True s@Struct {..} = [lt|template<typename _AllocTo#{sepBeginBy ", typename " paramName declParams},  template<typename> typename _Alloc>
+        struct uses_allocator<#{className}, _AllocTo>
+        : is_convertible<typename _AllocTo, typename #{alloc}>
     {};|]
             where
                 className =  qualifiedClassName s
@@ -244,7 +244,7 @@ namespace std
         {
         }|]
 
-        needAlloc alloc = isJust structBase || any (allocParameterized alloc . fieldType) structFields
+        needAlloc alloc = allocator_concept || isJust structBase || any (allocParameterized alloc . fieldType) structFields
         
         allocParameterized alloc t = (isStruct t) || (L.isInfixOf (L.pack alloc) $ toLazyText $ cppTypeExpandAliases t)
 

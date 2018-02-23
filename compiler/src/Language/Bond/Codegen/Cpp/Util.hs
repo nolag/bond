@@ -59,6 +59,7 @@ classParamsRaw :: Declaration -> String
 classParamsRaw = sepBy ", " paramName . declParams
 
 classParams :: Declaration -> Maybe String -> String
+classParams e@Enum {..} _ = classParams e Nothing
 classParams d (Just []) = classParams d Nothing
 classParams d (Just allocator) = angles $ ((classParamsRaw d) ++ optComma ++ "typename " ++ allocator)
     where

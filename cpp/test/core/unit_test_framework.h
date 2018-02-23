@@ -145,3 +145,41 @@ inline void AddTestCase(UnitTestSuite& suite, const char* name)
 {
     AddTestCase<Key, Test, T...>(suite, name, std::integral_constant<bool, ENABLE(Pred, Key)>{});
 }
+
+template <
+    uint32_t Key,
+    // MSVC 2015 does not seem to properly support the line below
+    // template<template <template <typename> typename> typename, typename, template <typename> typename...> class Test,
+    template<template <template <typename> typename> typename, typename, template <typename> typename, template <typename> typename, template <typename> typename> class Test,
+    template<template<typename> typename> typename TClass,
+    typename TReader,
+    template<typename> typename... T>
+inline void AddTestCase(UnitTestSuite& suite, const char* name, std::true_type)
+{
+    suite.Add(Test<TClass, TReader, T...>::Run, Key, name);
+}
+
+template <
+    uint32_t Key,
+    // MSVC 2015 does not seem to properly support the line below
+    // template<template <template <typename> typename> typename, typename, template <typename> typename...> class Test,
+    template<template <template <typename> typename> typename, typename, template <typename> typename, template <typename> typename, template <typename> typename> class Test,
+    template<template<typename> typename> typename TClass,
+    typename TReader,
+    template<typename> typename... T>
+inline void AddTestCase(UnitTestSuite& /*suite*/, const char* /*name*/, std::false_type)
+{}
+
+template <
+    bool Pred,
+    uint32_t Key,
+    // MSVC 2015 does not seem to properly support the line below
+    // template<template <template <typename> typename> typename, typename, template <typename> typename...> class Test,
+    template<template <template <typename> typename> typename, typename, template <typename> typename, template <typename> typename, template <typename> typename> class Test,
+    template<template<typename> typename> typename TClass,
+    typename TReader,
+    template<typename> typename... T>
+inline void AddTestCase(UnitTestSuite& suite, const char* name)
+{
+    AddTestCase<Key, Test, TClass, TReader, T...>(suite, name, std::integral_constant<bool, ENABLE(Pred, Key)>{});
+}

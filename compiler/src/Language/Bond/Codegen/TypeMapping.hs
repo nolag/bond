@@ -449,6 +449,7 @@ cppTypeCustomAlloc _ _ allocName (BT_Nullable element)
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Vector element) = "std::vector<" <>> elementTypeName element <<>> ", " <>> allocator scoped allocator_concept allocName element <<> ">"
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Set element) = "std::set<" <>> elementTypeName element <<>> comparer element <<>> allocator scoped allocator_concept allocName element <<> ">"
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Map key value) = "std::map<" <>> elementTypeName key <<>> ", " <>> elementTypeName value <<>> comparer key <<>> pairAllocator scoped allocator_concept allocName key value <<> ">"
+cppTypeCustomAlloc _ _ _ e@(BT_UserDefined Enum{..} _) = cppType e
 cppTypeCustomAlloc _  allocator_concept _ (BT_UserDefined decl args) = declQualifiedTypeName decl <<>> (angles <$> commaSepTypeNamesWithAllocator args allocator_concept)
 cppTypeCustomAlloc _ _ _ t = cppType t
 
