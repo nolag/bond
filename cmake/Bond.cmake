@@ -6,13 +6,14 @@ include (Folders)
 #   [ENUM_HEADER]
 #   [COMM]
 #   [GRPC]
+#   [ALLOCATOR_CONCEPT]
 #   [OUTPUT_DIR dir]
 #   [IMPORT_DIR dir [dir2, ...]]
 #   [OPTIONS opt [opt2 ...]])
 #   [TARGET name]
 #
 function (add_bond_codegen)
-    set (flagArgs ENUM_HEADER COMM GRPC)
+    set (flagArgs ENUM_HEADER COMM GRPC ALLOCATOR_CONCEPT)
     set (oneValueArgs OUTPUT_DIR TARGET)
     set (multiValueArgs IMPORT_DIR OPTIONS)
     cmake_parse_arguments (arg "${flagArgs}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -37,6 +38,9 @@ function (add_bond_codegen)
     endif()
     if (arg_GRPC)
         list(APPEND options --grpc)
+    endif()
+    if (arg_ALLOCATOR_CONCEPT)
+        list(APPEND options --allocator-concept)
     endif()
     set (inputs "${arg_UNPARSED_ARGUMENTS}")
     set (outputs)
@@ -90,7 +94,7 @@ endfunction()
 function (add_bond_executable target)
     set (schemas)
     set (sources)
-    set (flagArgs COMM GRPC)
+    set (flagArgs COMM GRPC ALLOCATOR_CONCEPT)
     cmake_parse_arguments (arg "${flagArgs}" "" "" ${ARGN})
     foreach (file ${ARGV})
         get_filename_component (ext ${file} EXT)
@@ -114,10 +118,14 @@ function (add_bond_executable target)
         if (arg_GRPC)
             list (APPEND options GRPC)
         endif()
+        if (arg_ALLOCATOR_CONCEPT)
+            list (APPEND options ALLOCATOR_CONCEPT)
+        endif()
         add_bond_codegen (${schemas} ${options})
     endif()
     list (REMOVE_ITEM ARGV COMM)
     list (REMOVE_ITEM ARGV GRPC)
+    list (REMOVE_ITEM ARGV ALLOCATOR_CONCEPT)
     add_executable (${ARGV} ${sources})
     add_target_to_folder(${target})
     target_link_libraries (${target} PRIVATE
@@ -135,6 +143,7 @@ endfunction()
 #   [BUILD_ONLY]
 #   [COMM]
 #   [GRPC])
+#   [ALLOCATOR_CONCEPT])
 #
 function (add_bond_test test)
     set (flagArgs BUILD_ONLY)
