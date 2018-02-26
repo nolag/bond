@@ -1,30 +1,45 @@
 #include "precompiled.h"
-
-#include <memory>
-
-#include "allocators.h"
+#ifdef _MSC_VER
 #include "allocator_concept_default_allocator_tests_generated/allocator_test_reflection.h"
 #include "allocator_concept_custom_allocator_tests_generated/allocator_test_reflection.h"
-#include "serialization_test.h"
+#endif
 
-template<template <template <typename> typename> typename T, typename Reader, template <typename> typename Writer, template <typename> typename DefaultAlloc, template <typename> typename OtherAlloc>
-TEST_CASE_BEGIN(AllocatorConceptTest)     
+#include <boost/mpl/list.hpp>
+#include <boost/range/combine.hpp>
+#include <boost/range/irange.hpp>
+#include <boost/test/unit_test.hpp>
+
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable: 4100)
+#endif
+#include <boost/thread.hpp>
+#include <boost/thread/scoped_thread.hpp>
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
+
+#include <memory>
+#include <type_traits>
+#include <vector>
+
+
+template<template <template <typename> typename> typename T, typename Reader, template <typename> typename DefaultAlloc, template <typename> typename OtherAlloc>
+void AllocatorConceptTestHelper()
 {
-    typedef bond::OutputMemoryStream<DefaultAlloc<T<DefaultAlloc> > > DefaultAllocatorOutputStream;
-    typedef bond::OutputMemoryStream<OtherAlloc<T<OtherAlloc> > > OtherAllocatorOutputStream;
-    
     DefaultAlloc<T<DefaultAlloc> > defaultAlloc;
     OtherAlloc<T<OtherAlloc> > otherAlloc;
-    
+
     boost::shared_ptr<T<DefaultAlloc> > from = boost::allocate_shared<T<DefaultAlloc> >(defaultAlloc, defaultAlloc);
     InitRandom(*from);
 
     // Serialize
-    typename Writer<DefaultAllocatorOutputStream>::Buffer buffer(defaultAlloc);
-    Writer<DefaultAllocatorOutputStream> writer(buffer);
+    using Writer = typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type;
+    Writer::Buffer output;
+    Writer writer(output);
     bond::Serialize(*from, writer);
-        
-    bond::blob data = buffer.GetBuffer();
+
+    bond::blob data = output.GetBuffer();
 
     // Compile-time deserialize, serialize to other type then go back to assure it works.
     {
@@ -33,25 +48,24 @@ TEST_CASE_BEGIN(AllocatorConceptTest)
 
         Reader reader(data);
         bond::Deserialize(reader, *toOtherAllocator);
-        
+
         boost::shared_ptr<T<OtherAlloc> > x = boost::allocate_shared<T<OtherAlloc> >(otherAlloc, otherAlloc);
         boost::shared_ptr<T<OtherAlloc> > y = boost::allocate_shared<T<OtherAlloc> >(otherAlloc, otherAlloc);
-        
+
         *x = *toOtherAllocator;
         y->swap(*toOtherAllocator);
 
-        UT_Compare(*x, *y);
-        
-        
-        typename Writer<OtherAllocatorOutputStream>::Buffer buffer2(otherAlloc);
-        Writer<OtherAllocatorOutputStream> writer2(buffer2);
+        BOOST_CHECK(*x == *y);
+
+        Writer::Buffer output2;
+        Writer writer2(output2);
         bond::Serialize(*y, writer2);
-        bond::blob data2 = buffer2.GetBuffer();
-        
+        bond::blob data2 = output2.GetBuffer();
+
         Reader reader2(data2);
         bond::Deserialize(reader2, *toSameAlloc);
-        
-        UT_Compare(*from, *toSameAlloc);
+
+        BOOST_CHECK(*from == *toSameAlloc);
     }
 
     // Runtime-time deserialize
@@ -61,27 +75,43 @@ TEST_CASE_BEGIN(AllocatorConceptTest)
 
         Reader reader2(data);
         bond::bonded<void> bonded(reader2, bond::GetRuntimeSchema<T<OtherAlloc> >());
-        
+
         bonded.Deserialize(*toOtherAllocator);
-        
-        typename Writer<OtherAllocatorOutputStream>::Buffer buffer2(otherAlloc);
-        Writer<OtherAllocatorOutputStream> writer2(buffer2);
+
+        Writer::Buffer output2;
+        Writer writer2(output2);
         bond::Serialize(*toOtherAllocator, writer2);
-        bond::blob data2 = buffer2.GetBuffer();
-        
+        bond::blob data2 = output2.GetBuffer();
+
         Reader reader(data2);
-        bond::bonded<void> bonded2(reader2, bond::GetRuntimeSchema<T<DefaultAlloc> >());
+        bond::bonded<void> bonded2(reader2, bond::GetRuntimeSchema<T<DefaultAlloc>>());
 
         bonded2.Deserialize(*toSameAlloc);
 
-        UT_Compare(*from, *toSameAlloc);
+        BOOST_CHECK(*from == *toSameAlloc);
     }
 }
-TEST_CASE_END
+
+BOOST_AUTO_TEST_SUITE(AllocatorConceptTests)
+
+using all_protocols = boost::mpl::list<
+    bond::SimpleBinaryReader<bond::InputBuffer>,
+    bond::CompactBinaryReader<bond::InputBuffer>,
+    bond::FastBinaryReader<bond::InputBuffer> >;
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptNoDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
+{
+    AllocatorConceptTestHelper<allocator_concept_default_allocator_tests_generated::Struct, Reader, std::allocator, detail::TestAllocator>();
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
+{
+    AllocatorConceptTestHelper<allocator_concept_custom_allocator_tests_generated::Struct, Reader, detail::TestAllocator, std::allocator>();
+}
 
 // This test compiling proves that the defaults of the type are correct.
 // Since templated arguments cannot use defaults, we don't use templates here
-TEST_CASE_BEGIN(AllocatorDefaultTest)
+BOOST_AUTO_TEST_CASE(AllocatorConceptUsesCorrectDefaultAllocatorTest)
 {
     allocator_concept_default_allocator_tests_generated::Struct<> stdAlloc;
     allocator_concept_custom_allocator_tests_generated::Struct<> customAlloc;
@@ -90,50 +120,10 @@ TEST_CASE_BEGIN(AllocatorDefaultTest)
     allocator_concept_custom_allocator_tests_generated::Struct<detail::TestAllocator> customAlloc2;
     customAlloc = customAlloc2;
 }
-TEST_CASE_END
 
-template <uint16_t N, typename Reader, template <typename> typename Writer>
-void AllocatorConceptTests(const char* name)
+BOOST_AUTO_TEST_SUITE_END()
+
+    bool init_unit_test()
 {
-    UnitTestSuite suite(name);
-
-    AddTestCase<TEST_ID(N), 
-        AllocatorConceptTest, allocator_concept_default_allocator_tests_generated::Struct, Reader, Writer, std::allocator, detail::TestAllocator>(suite, "allocator_concept_default_allocator_tests_generated::Struct");
-
-    AddTestCase<TEST_ID((N + 1)),
-        AllocatorConceptTest, allocator_concept_custom_allocator_tests_generated::Struct, Reader, Writer, detail::TestAllocator, std::allocator>(suite, "allocator_concept_custom_allocator_tests_generated::Struct");
-}
-
-void AllocatorConceptTestsInit()
-{
-    TEST_SIMPLE_PROTOCOL(
-        AllocatorConceptTests<
-            0x1901,
-            bond::SimpleBinaryReader<bond::InputBuffer>,
-            bond::SimpleBinaryWriter>("Allocator concept tests for SimpleBinary");
-    );
-
-    TEST_COMPACT_BINARY_PROTOCOL(
-        AllocatorConceptTests<
-            0x1903,
-            bond::CompactBinaryReader<bond::InputBuffer>,
-            bond::CompactBinaryWriter>("Allocator concept tests for CompactBinary");
-    );
-
-    TEST_FAST_BINARY_PROTOCOL(
-        AllocatorConceptTests<
-            0x1905,
-            bond::FastBinaryReader<bond::InputBuffer>,
-            bond::FastBinaryWriter>("Allocator concept tests for FastBinary");
-    );
-
-    UnitTestSuite suite("Default allocation types");
-    AddTestCase<TEST_ID(0x1906), AllocatorDefaultTest>(suite, "Default allocation types");
-}
-
-bool init_unit_test()
-{
-    AllocatorConceptTestsInit();
     return true;
 }
-
