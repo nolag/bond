@@ -50,7 +50,6 @@ namespace nsmapped
             _float()
         {
         }
-
         
         // Compiler generated copy ctor OK
         BasicTypes(const BasicTypes&) = default;
@@ -146,4 +145,5 @@ namespace nsmapped
         left.swap(right);
     }
 } // namespace nsmapped
+
 

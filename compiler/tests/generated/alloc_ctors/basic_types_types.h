@@ -52,7 +52,6 @@ namespace tests
             _float()
         {
         }
-
         
         // Compiler generated copy ctor OK
         BasicTypes(const BasicTypes&) = default;
@@ -206,8 +205,9 @@ namespace tests
 namespace std
 {
     template <typename _Alloc>
-    struct uses_allocator< ::tests::BasicTypes, _Alloc>
+        struct uses_allocator< ::tests::BasicTypes, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 

@@ -27,7 +27,6 @@ namespace tests
           : x()
         {
         }
-
         
         // Compiler generated copy ctor OK
         Base(const Base&) = default;
@@ -112,7 +111,6 @@ namespace tests
           : x()
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -196,13 +194,14 @@ namespace tests
 namespace std
 {
     template <typename _Alloc>
-    struct uses_allocator< ::tests::Base, _Alloc>
+        struct uses_allocator< ::tests::Base, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 
     template <typename _Alloc>
-    struct uses_allocator< ::tests::Foo, _Alloc>
+        struct uses_allocator< ::tests::Foo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 

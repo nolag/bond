@@ -26,7 +26,6 @@ namespace tests
         Foo()
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -83,4 +82,5 @@ namespace tests
         left.swap(right);
     }
 } // namespace tests
+
 

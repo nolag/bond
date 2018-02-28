@@ -29,7 +29,6 @@ namespace tests
         Foo(_bond_vc12_ctor_workaround_ = {})
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -171,7 +170,6 @@ namespace tests
           : aWrappedEnum(::tests::_bond_enumerators::EnumToWrap::anEnumValue)
         {
         }
-
         
         // Compiler generated copy ctor OK
         WrappingAnEnum(const WrappingAnEnum&) = default;
@@ -238,13 +236,14 @@ namespace tests
 namespace std
 {
     template <typename _Alloc, typename T>
-    struct uses_allocator<typename ::tests::Foo<T>, _Alloc>
+        struct uses_allocator<typename ::tests::Foo<T>, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 
     template <typename _Alloc>
-    struct uses_allocator< ::tests::WrappingAnEnum, _Alloc>
+        struct uses_allocator< ::tests::WrappingAnEnum, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 

@@ -169,7 +169,6 @@ namespace tests
             m_wstr_1(L"default wstring value")
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -376,8 +375,9 @@ namespace tests
 namespace std
 {
     template <typename _Alloc>
-    struct uses_allocator< ::tests::Foo, _Alloc>
+        struct uses_allocator< ::tests::Foo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 

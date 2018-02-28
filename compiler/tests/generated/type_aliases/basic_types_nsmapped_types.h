@@ -52,7 +52,6 @@ namespace nsmapped
             _float()
         {
         }
-
         
         // Compiler generated copy ctor OK
         BasicTypes(const BasicTypes&) = default;
@@ -170,8 +169,9 @@ namespace nsmapped
 namespace std
 {
     template <typename _Alloc>
-    struct uses_allocator< ::nsmapped::BasicTypes, _Alloc>
+        struct uses_allocator< ::nsmapped::BasicTypes, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 

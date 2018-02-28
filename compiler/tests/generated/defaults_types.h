@@ -192,7 +192,6 @@ namespace tests
             m_int64_neg_oct(-83LL)
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -360,4 +359,5 @@ namespace tests
         left.swap(right);
     }
 } // namespace tests
+
 

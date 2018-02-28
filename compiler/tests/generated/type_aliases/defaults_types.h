@@ -194,7 +194,6 @@ namespace tests
             m_int64_neg_oct(-83LL)
         {
         }
-
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -409,8 +408,9 @@ namespace tests
 namespace std
 {
     template <typename _Alloc>
-    struct uses_allocator< ::tests::Foo, _Alloc>
+        struct uses_allocator< ::tests::Foo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
+
 
