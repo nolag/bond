@@ -134,11 +134,11 @@ verifyFiles options baseName =
         else if fields
              then PublicFields
              else Properties
-    typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ typeMapping
+    typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ tm
         where
             allocatorType = if allocator_concept then Just "typename _Alloc" else allocator
             typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocator_concept)  allocatorType 
-            typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
+            tm = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
 
     typeMapping Cs {} = csTypeMapping
     typeMapping Java {} = javaTypeMapping
@@ -177,6 +177,21 @@ verifyFiles options baseName =
         [ testGroup "scoped allocator" $
             map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "scoped_allocator")
                 (templates $ options { allocator = Just "arena", scoped_alloc_enabled = True })
+            | isNothing allocator
+        ] ++
+        [ testGroup "allocator concept no default allocator provided" $
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_no_default")
+                (templates $ options { allocator_concept = True })
+            | isNothing allocator
+        ] ++
+        [ testGroup "allocator concept with scoped allocator" $
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_with_scoped_allocator")
+                (templates $ options { scoped_alloc_enabled = True, allocator_concept = True })
+            | isNothing allocator
+        ] ++
+        [ testGroup "allocator concept default is allocator provided" $
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_with_default")
+                (templates $ options { allocator = Just "arena", allocator_concept = True })
             | isNothing allocator
         ]
     extra Java {} =
