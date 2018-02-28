@@ -50,7 +50,6 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
 #include <bond/core/config.h>
 #include <bond/core/containers.h>
 #{newlineSep 0 optionalHeader bondHeaders}
-#{memoryInclude}
 #{includeEnum}
 #{newlineSepEnd 0 includeImport imports}
 #{CPP.openNamespace cpp}
@@ -91,8 +90,6 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     includeHeader header = [lt|#include #{header}|]
 
     includeEnum = if enumHeader then [lt|#include "#{file}_enum.h"|] else mempty
-    
-    memoryInclude = if allocator_concept then [lt|#include <memory>|] else mempty
 
     -- True if declarations have any type satisfying f
     have f = getAny $ F.foldMap g declarations
@@ -116,7 +113,8 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
         (have anyNullable, "<bond/core/nullable.h>"),
         (have anyBonded, "<bond/core/bonded.h>"),
         (have anyBlob, "<bond/core/blob.h>"),
-        (scoped_alloc_enabled && have anyStringOrContainer, "<scoped_allocator>")]
+        (scoped_alloc_enabled && have anyStringOrContainer, "<scoped_allocator>"),
+        (allocator_concept, "<memory>")]
 
     usesAllocatorSpecialization _ = [lt|
 namespace std
