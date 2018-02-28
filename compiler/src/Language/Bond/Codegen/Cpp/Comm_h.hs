@@ -91,7 +91,6 @@ comm_h export_attribute allocator allocator_concept cpp file imports declaration
         public: typedef #{typename}methods#{length serviceMethods}::type methods;
         #{constructor}
     };
-
     #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}
 
     #{template}class #{className}::Proxy

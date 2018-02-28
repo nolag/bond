@@ -177,7 +177,6 @@ inline #{className}::#{proxyName}<TThreadPool>::#{proxyName}(
 
     #{constructor}
 };
-
 #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}
 |]
       where

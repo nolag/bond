@@ -57,8 +57,8 @@ verifyApplyCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ apply_h protocols (export_attribute options)
-        , apply_cpp protocols
+        [ apply_h protocols (export_attribute options) (allocator options) (allocator_concept options)
+        , apply_cpp protocols (allocator options) (allocator_concept options)
         ]
     protocols =
         [ ProtocolReader "bond::CompactBinaryReader<bond::InputBuffer>"
@@ -77,8 +77,8 @@ verifyExportsCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ reflection_h (export_attribute options)
-        , comm_h (export_attribute options)
+        [ reflection_h (export_attribute options) (allocator options) (allocator_concept options)
+        , comm_h (export_attribute options) (allocator options) (allocator_concept options)
         ]
 
 verifyCppCommCodegen :: [String] -> FilePath -> TestTree
@@ -88,9 +88,9 @@ verifyCppCommCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ comm_h (export_attribute options)
-        , comm_cpp
-        , types_cpp
+        [ comm_h (export_attribute options) (allocator options) (allocator_concept options)
+        , comm_cpp (allocator_concept options)
+        , types_cpp (allocator_concept options)
         ]
 
 verifyCppGrpcCodegen :: [String] -> FilePath -> TestTree
@@ -100,9 +100,9 @@ verifyCppGrpcCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ grpc_h (export_attribute options)
-        , grpc_cpp
-        , types_cpp
+        [ grpc_h (export_attribute options) (allocator options) (allocator_concept options)
+        , grpc_cpp (allocator_concept options)
+        , types_cpp (allocator_concept options)
         ]
 
 verifyCsCommCodegen :: [String] -> FilePath -> TestTree
@@ -134,14 +134,19 @@ verifyFiles options baseName =
         else if fields
              then PublicFields
              else Properties
-    typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled) allocator
+    typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ typeMapping
+        where
+            allocatorType = if allocator_concept then Just "typename _Alloc" else allocator
+            typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocator_concept)  allocatorType 
+            typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
+
     typeMapping Cs {} = csTypeMapping
     typeMapping Java {} = javaTypeMapping
     templates Cpp {..} =
-        [ (reflection_h export_attribute)
-        , types_cpp
-        , comm_cpp
-        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled
+        [ (reflection_h export_attribute allocator allocator_concept)
+        , (types_cpp allocator_concept)
+        , (comm_cpp allocator_concept)
+        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
         ] <>
         [ enum_h | enum_header]
     templates Cs {..} =
@@ -156,21 +161,21 @@ verifyFiles options baseName =
         ]
     extra Cpp {..} =
         [ testGroup "custom allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False "arena") "allocator")
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False False "arena") "allocator")
                 (templates $ options { allocator = Just "arena" })
             | isNothing allocator
         ] ++
         [ testGroup "constructors with allocator argument" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False "arena") "alloc_ctors")
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False False "arena") "alloc_ctors")
                 (templates $ options { allocator = Just "arena", alloc_ctors_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "type aliases" $
-            map (verify (cppCustomAllocTypeMapping False "arena") "type_aliases")
+            map (verify (cppCustomAllocTypeMapping False False "arena") "type_aliases")
                 (templates $ options { allocator = Just "arena", type_aliases_enabled = True })
         ] ++
         [ testGroup "scoped allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True "arena") "scoped_allocator")
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "scoped_allocator")
                 (templates $ options { allocator = Just "arena", scoped_alloc_enabled = True })
             | isNothing allocator
         ]

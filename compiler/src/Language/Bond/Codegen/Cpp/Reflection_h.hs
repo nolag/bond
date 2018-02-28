@@ -58,6 +58,7 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
 
         public: typedef #{typename}fields#{length structFields}::type fields;
         #{constructor}
+        
         static ::bond::Metadata GetMetadata()
         {
             return ::bond::reflection::MetadataInit#{metadataInitArgs}("#{declName}", "#{getDeclTypeName idl s}",
