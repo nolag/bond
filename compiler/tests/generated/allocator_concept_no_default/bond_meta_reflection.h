@@ -11,8 +11,8 @@ namespace bondmeta
     //
     // HasMetaFields
     //
-    template <template<typename> typename _Alloc>
-    struct HasMetaFields<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct HasMetaFields<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -27,9 +27,9 @@ namespace bondmeta
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::required_optional_field_modifier,
-                HasMetaFields<typename _Alloc>,
+                HasMetaFields<_Alloc>,
                 std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > >,
-                &HasMetaFields<typename _Alloc>::full_name,
+                &HasMetaFields<_Alloc>::full_name,
                 &s_full_name_metadata
             > {}  full_name;
         
@@ -37,9 +37,9 @@ namespace bondmeta
             typedef struct : ::bond::reflection::FieldTemplate<
                 1,
                 ::bond::reflection::required_optional_field_modifier,
-                HasMetaFields<typename _Alloc>,
+                HasMetaFields<_Alloc>,
                 std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > >,
-                &HasMetaFields<typename _Alloc>::name,
+                &HasMetaFields<_Alloc>::name,
                 &s_name_metadata
             > {}  name;
         };
@@ -66,16 +66,16 @@ namespace bondmeta
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata HasMetaFields<typename _Alloc>::Schema::metadata
-        = HasMetaFields<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata HasMetaFields<_Alloc>::Schema::metadata
+        = HasMetaFields<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata HasMetaFields<typename _Alloc>::Schema::s_full_name_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata HasMetaFields<_Alloc>::Schema::s_full_name_metadata
         = ::bond::reflection::MetadataInit("full_name");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata HasMetaFields<typename _Alloc>::Schema::s_name_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata HasMetaFields<_Alloc>::Schema::s_name_metadata
         = ::bond::reflection::MetadataInit("name");
 
     

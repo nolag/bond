@@ -9,8 +9,8 @@ namespace tests
     //
     // BasicTypes
     //
-    template <template<typename> typename _Alloc>
-    struct BasicTypes<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct BasicTypes<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -37,9 +37,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 bool,
-                &BasicTypes<typename _Alloc>::_bool,
+                &BasicTypes<_Alloc>::_bool,
                 &s__bool_metadata
             > {}  _bool;
         
@@ -47,9 +47,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 2,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > >,
-                &BasicTypes<typename _Alloc>::_str,
+                &BasicTypes<_Alloc>::_str,
                 &s__str_metadata
             > {}  _str;
         
@@ -57,9 +57,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 3,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<wchar_t> > >,
-                &BasicTypes<typename _Alloc>::_wstr,
+                &BasicTypes<_Alloc>::_wstr,
                 &s__wstr_metadata
             > {}  _wstr;
         
@@ -67,9 +67,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 10,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 uint64_t,
-                &BasicTypes<typename _Alloc>::_uint64,
+                &BasicTypes<_Alloc>::_uint64,
                 &s__uint64_metadata
             > {}  _uint64;
         
@@ -77,9 +77,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 11,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 uint16_t,
-                &BasicTypes<typename _Alloc>::_uint16,
+                &BasicTypes<_Alloc>::_uint16,
                 &s__uint16_metadata
             > {}  _uint16;
         
@@ -87,9 +87,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 12,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 uint32_t,
-                &BasicTypes<typename _Alloc>::_uint32,
+                &BasicTypes<_Alloc>::_uint32,
                 &s__uint32_metadata
             > {}  _uint32;
         
@@ -97,9 +97,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 13,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 uint8_t,
-                &BasicTypes<typename _Alloc>::_uint8,
+                &BasicTypes<_Alloc>::_uint8,
                 &s__uint8_metadata
             > {}  _uint8;
         
@@ -107,9 +107,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 14,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 int8_t,
-                &BasicTypes<typename _Alloc>::_int8,
+                &BasicTypes<_Alloc>::_int8,
                 &s__int8_metadata
             > {}  _int8;
         
@@ -117,9 +117,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 15,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 int16_t,
-                &BasicTypes<typename _Alloc>::_int16,
+                &BasicTypes<_Alloc>::_int16,
                 &s__int16_metadata
             > {}  _int16;
         
@@ -127,9 +127,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 16,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 int32_t,
-                &BasicTypes<typename _Alloc>::_int32,
+                &BasicTypes<_Alloc>::_int32,
                 &s__int32_metadata
             > {}  _int32;
         
@@ -137,9 +137,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 17,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 int64_t,
-                &BasicTypes<typename _Alloc>::_int64,
+                &BasicTypes<_Alloc>::_int64,
                 &s__int64_metadata
             > {}  _int64;
         
@@ -147,9 +147,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 18,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 double,
-                &BasicTypes<typename _Alloc>::_double,
+                &BasicTypes<_Alloc>::_double,
                 &s__double_metadata
             > {}  _double;
         
@@ -157,9 +157,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 20,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 float,
-                &BasicTypes<typename _Alloc>::_float,
+                &BasicTypes<_Alloc>::_float,
                 &s__float_metadata
             > {}  _float;
         
@@ -167,9 +167,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 21,
                 ::bond::reflection::optional_field_modifier,
-                BasicTypes<typename _Alloc>,
+                BasicTypes<_Alloc>,
                 ::bond::blob,
-                &BasicTypes<typename _Alloc>::_blob,
+                &BasicTypes<_Alloc>::_blob,
                 &s__blob_metadata
             > {}  _blob;
         };
@@ -220,64 +220,64 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::metadata
-        = BasicTypes<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::metadata
+        = BasicTypes<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__bool_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__bool_metadata
         = ::bond::reflection::MetadataInit("_bool");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__str_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__str_metadata
         = ::bond::reflection::MetadataInit("_str");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__wstr_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__wstr_metadata
         = ::bond::reflection::MetadataInit("_wstr");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__uint64_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__uint64_metadata
         = ::bond::reflection::MetadataInit("_uint64");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__uint16_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__uint16_metadata
         = ::bond::reflection::MetadataInit("_uint16");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__uint32_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__uint32_metadata
         = ::bond::reflection::MetadataInit("_uint32");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__uint8_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__uint8_metadata
         = ::bond::reflection::MetadataInit("_uint8");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__int8_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__int8_metadata
         = ::bond::reflection::MetadataInit("_int8");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__int16_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__int16_metadata
         = ::bond::reflection::MetadataInit("_int16");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__int32_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__int32_metadata
         = ::bond::reflection::MetadataInit("_int32");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__int64_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__int64_metadata
         = ::bond::reflection::MetadataInit("_int64");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__double_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__double_metadata
         = ::bond::reflection::MetadataInit("_double");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__float_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__float_metadata
         = ::bond::reflection::MetadataInit("_float");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata BasicTypes<typename _Alloc>::Schema::s__blob_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata BasicTypes<_Alloc>::Schema::s__blob_metadata
         = ::bond::reflection::MetadataInit("_blob");
 
     

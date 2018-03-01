@@ -10,7 +10,7 @@ using namespace examples::allocator_concept;
 
 int main()
 {
-    MyAllocator<char> alloc{ 123 };
+    MyAllocator<char> alloc;
 
     Struct<MyAllocator> obj{ alloc };
     obj.ints.push_back(1);

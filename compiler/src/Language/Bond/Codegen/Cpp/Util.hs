@@ -61,7 +61,7 @@ classParamsRaw = sepBy ", " paramName . declParams
 classParams :: Declaration -> Maybe String -> String
 classParams e@Enum {..} _ = classParams e Nothing
 classParams d (Just []) = classParams d Nothing
-classParams d (Just allocator) = angles $ ((classParamsRaw d) ++ optComma ++ "typename " ++ allocator)
+classParams d (Just allocator) = angles $ ((classParamsRaw d) ++ optComma ++ allocator)
     where
         optComma = if null $ declParams d then "" else ", "
 classParams d Nothing = angles $ classParamsRaw d
@@ -83,7 +83,7 @@ fillTemplateDefault True allocator =  [lt|=#{allocator}|]
 fillTemplateDefault False _ = mempty
 
 template :: Declaration -> Bool -> Maybe String -> Text
-template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}template<typename> typename _Alloc#{fillTemplateDefault declared_here allocator}>
+template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}template<typename> class _Alloc#{fillTemplateDefault declared_here allocator}>
     |]
     where
         optComma = if null $ declParams d then mempty else [lt|, |]

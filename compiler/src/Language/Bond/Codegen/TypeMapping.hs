@@ -443,9 +443,16 @@ cppTypeCustomAlloc scoped  allocator_concept allocName BT_WString = "std::basic_
 cppTypeCustomAlloc scoped allocator_concept allocName BT_MetaName = cppTypeCustomAlloc scoped allocator_concept allocName BT_String
 cppTypeCustomAlloc scoped  allocator_concept allocName BT_MetaFullName = cppTypeCustomAlloc scoped allocator_concept allocName BT_String
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_List element) = "std::list<" <>> elementTypeName element <<>> ", " <>> allocator scoped allocator_concept allocName element <<> ">"
-cppTypeCustomAlloc _ _ allocName (BT_Nullable element)
-    | isStruct element = "::bond::nullable<" <>> elementTypeName element <<> ", " <> allocName <> ">"
-    | otherwise = "::bond::nullable<" <>> elementTypeName element <<> ">"
+cppTypeCustomAlloc _ True allocName (BT_Nullable element)
+    | isStruct element = ("::bond::nullable<" <>> elementName <<> ", " <> allocName <> "<")  <<>> elementName <<> "> >"
+    | otherwise = "::bond::nullable<" <>> elementName <<> ">"
+        where
+            elementName = elementTypeName element
+cppTypeCustomAlloc _ False allocName (BT_Nullable element)
+    | isStruct element = "::bond::nullable<" <>> elementName <<> ", " <> allocName <> ">"
+    | otherwise = "::bond::nullable<" <>> elementName <<> ">"
+        where
+            elementName = elementTypeName element
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Vector element) = "std::vector<" <>> elementTypeName element <<>> ", " <>> allocator scoped allocator_concept allocName element <<> ">"
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Set element) = "std::set<" <>> elementTypeName element <<>> comparer element <<>> allocator scoped allocator_concept allocName element <<> ">"
 cppTypeCustomAlloc scoped allocator_concept allocName (BT_Map key value) = "std::map<" <>> elementTypeName key <<>> ", " <>> elementTypeName value <<>> comparer key <<>> pairAllocator scoped allocator_concept allocName key value <<> ">"

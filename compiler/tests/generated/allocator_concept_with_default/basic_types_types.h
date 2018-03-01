@@ -20,7 +20,7 @@
 namespace tests
 {
     
-    template <template<typename> typename _Alloc=arena>
+    template <template<typename> class _Alloc=arena>
     struct BasicTypes
     {
         bool _bool;
@@ -81,7 +81,7 @@ namespace tests
 #endif
         
         explicit
-        BasicTypes(const _Alloc<::tests::BasicTypes<typename _Alloc>>& allocator)
+        BasicTypes(const _Alloc<::tests::BasicTypes<_Alloc>>& allocator)
           : _bool(),
             _str(allocator),
             _wstr(allocator),
@@ -162,8 +162,8 @@ namespace tests
         }
     };
 
-    template <template<typename> typename _Alloc=arena>
-    inline void swap(::tests::BasicTypes<typename _Alloc>& left, ::tests::BasicTypes<typename _Alloc>& right)
+    template <template<typename> class _Alloc=arena>
+    inline void swap(::tests::BasicTypes<_Alloc>& left, ::tests::BasicTypes<_Alloc>& right)
     {
         left.swap(right);
     }
@@ -172,8 +172,8 @@ namespace tests
 namespace std
 {
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::BasicTypes<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::BasicTypes<typename _Alloc>>>
+        struct uses_allocator<::tests::BasicTypes<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::BasicTypes<_Alloc>>>
     {};
 }
 

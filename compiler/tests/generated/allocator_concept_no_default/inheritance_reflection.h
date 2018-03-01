@@ -9,8 +9,8 @@ namespace tests
     //
     // Base
     //
-    template <template<typename> typename _Alloc>
-    struct Base<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Base<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -24,9 +24,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Base<typename _Alloc>,
+                Base<_Alloc>,
                 int32_t,
-                &Base<typename _Alloc>::x,
+                &Base<_Alloc>::x,
                 &s_x_metadata
             > {}  x;
         };
@@ -51,19 +51,19 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Base<typename _Alloc>::Schema::metadata
-        = Base<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Base<_Alloc>::Schema::metadata
+        = Base<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Base<typename _Alloc>::Schema::s_x_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Base<_Alloc>::Schema::s_x_metadata
         = ::bond::reflection::MetadataInit("x");
 
     //
     // Foo
     //
-    template <template<typename> typename _Alloc>
-    struct Foo<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Foo<_Alloc>::Schema
     {
         typedef ::tests::Base base;
 
@@ -77,9 +77,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int32_t,
-                &Foo<typename _Alloc>::x,
+                &Foo<_Alloc>::x,
                 &s_x_metadata
             > {}  x;
         };
@@ -104,12 +104,12 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::metadata
-        = Foo<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::metadata
+        = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_x_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_x_metadata
         = ::bond::reflection::MetadataInit("x");
 
     

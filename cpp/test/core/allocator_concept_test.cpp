@@ -1,8 +1,7 @@
 #include "precompiled.h"
-#ifdef _MSC_VER
+
 #include "allocator_concept_default_allocator_tests_generated/allocator_test_reflection.h"
 #include "allocator_concept_custom_allocator_tests_generated/allocator_test_reflection.h"
-#endif
 
 #include <boost/mpl/list.hpp>
 #include <boost/range/combine.hpp>
@@ -13,8 +12,10 @@
 #pragma warning (push)
 #pragma warning (disable: 4100)
 #endif
+
 #include <boost/thread.hpp>
 #include <boost/thread/scoped_thread.hpp>
+
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif
@@ -22,7 +23,6 @@
 #include <memory>
 #include <type_traits>
 #include <vector>
-
 
 template<template <template <typename> typename> typename T, typename Reader, template <typename> typename DefaultAlloc, template <typename> typename OtherAlloc>
 void AllocatorConceptTestHelper()
@@ -34,9 +34,8 @@ void AllocatorConceptTestHelper()
     InitRandom(*from);
 
     // Serialize
-    using Writer = typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type;
-    Writer::Buffer output;
-    Writer writer(output);
+    typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type::Buffer output;
+    typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type writer(output);
     bond::Serialize(*from, writer);
 
     bond::blob data = output.GetBuffer();
@@ -57,8 +56,8 @@ void AllocatorConceptTestHelper()
 
         BOOST_CHECK(*x == *y);
 
-        Writer::Buffer output2;
-        Writer writer2(output2);
+        typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type::Buffer output2;
+        typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type writer2(output2);
         bond::Serialize(*y, writer2);
         bond::blob data2 = output2.GetBuffer();
 
@@ -78,8 +77,8 @@ void AllocatorConceptTestHelper()
 
         bonded.Deserialize(*toOtherAllocator);
 
-        Writer::Buffer output2;
-        Writer writer2(output2);
+        typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type::Buffer output2;
+        typename bond::get_protocol_writer<Reader, bond::OutputBuffer>::type writer2(output2);
         bond::Serialize(*toOtherAllocator, writer2);
         bond::blob data2 = output2.GetBuffer();
 
@@ -101,23 +100,23 @@ using all_protocols = boost::mpl::list<
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptNoDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
 {
-    AllocatorConceptTestHelper<allocator_concept_default_allocator_tests_generated::Struct, Reader, std::allocator, detail::TestAllocator>();
+    AllocatorConceptTestHelper<allocator_concept_default_allocator_tests::Struct, Reader, std::allocator, detail::TestAllocator>();
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
 {
-    AllocatorConceptTestHelper<allocator_concept_custom_allocator_tests_generated::Struct, Reader, detail::TestAllocator, std::allocator>();
+    AllocatorConceptTestHelper<allocator_concept_custom_allocator_tests::Struct, Reader, detail::TestAllocator, std::allocator>();
 }
 
 // This test compiling proves that the defaults of the type are correct.
 // Since templated arguments cannot use defaults, we don't use templates here
 BOOST_AUTO_TEST_CASE(AllocatorConceptUsesCorrectDefaultAllocatorTest)
 {
-    allocator_concept_default_allocator_tests_generated::Struct<> stdAlloc;
-    allocator_concept_custom_allocator_tests_generated::Struct<> customAlloc;
-    allocator_concept_default_allocator_tests_generated::Struct<std::allocator> stdAlloc2;
+    allocator_concept_default_allocator_tests::Struct<> stdAlloc;
+    allocator_concept_custom_allocator_tests::Struct<> customAlloc;
+    allocator_concept_default_allocator_tests::Struct<std::allocator> stdAlloc2;
     stdAlloc = stdAlloc2;
-    allocator_concept_custom_allocator_tests_generated::Struct<detail::TestAllocator> customAlloc2;
+    allocator_concept_custom_allocator_tests::Struct<detail::TestAllocator> customAlloc2;
     customAlloc = customAlloc2;
 }
 

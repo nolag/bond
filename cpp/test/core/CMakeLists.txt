@@ -114,7 +114,7 @@ add_bond_codegen (TARGET unit_test_codegen5
     OPTIONS
         --header=\\\"custom_protocols.h\\\"
         --allocator-concept
-        --namespace=\"allocator_test=allocator_concept_default_allocator_tests_generated\")
+        --namespace=\"allocator_test=allocator_concept_default_allocator_tests\")
         
 
 add_bond_codegen (TARGET unit_test_codegen6
@@ -125,7 +125,7 @@ add_bond_codegen (TARGET unit_test_codegen6
         --header=\\\"allocators.h\\\"
         --allocator=detail::TestAllocator
         --allocator-concept
-        --namespace=\"allocator_test=allocator_concept_custom_allocator_tests_generated\")
+        --namespace=\"allocator_test=allocator_concept_custom_allocator_tests\")
 
 # Full unit test is too big, .pdb files exceed compiler limit;
 # Since debugging such large executable is not practical anyways,

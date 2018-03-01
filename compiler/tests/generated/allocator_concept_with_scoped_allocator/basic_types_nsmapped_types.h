@@ -21,7 +21,7 @@
 namespace nsmapped
 {
     
-    template <template<typename> typename _Alloc=std::allocator>
+    template <template<typename> class _Alloc=std::allocator>
     struct BasicTypes
     {
         bool _bool;
@@ -82,7 +82,7 @@ namespace nsmapped
 #endif
         
         explicit
-        BasicTypes(const _Alloc<::nsmapped::BasicTypes<typename _Alloc>>& allocator)
+        BasicTypes(const _Alloc<::nsmapped::BasicTypes<_Alloc>>& allocator)
           : _bool(),
             _str(allocator),
             _wstr(allocator),
@@ -163,8 +163,8 @@ namespace nsmapped
         }
     };
 
-    template <template<typename> typename _Alloc=std::allocator>
-    inline void swap(::nsmapped::BasicTypes<typename _Alloc>& left, ::nsmapped::BasicTypes<typename _Alloc>& right)
+    template <template<typename> class _Alloc=std::allocator>
+    inline void swap(::nsmapped::BasicTypes<_Alloc>& left, ::nsmapped::BasicTypes<_Alloc>& right)
     {
         left.swap(right);
     }
@@ -173,8 +173,8 @@ namespace nsmapped
 namespace std
 {
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::nsmapped::BasicTypes<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::nsmapped::BasicTypes<typename _Alloc>>>
+        struct uses_allocator<::nsmapped::BasicTypes<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::nsmapped::BasicTypes<_Alloc>>>
     {};
 }
 

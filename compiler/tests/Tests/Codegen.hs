@@ -136,7 +136,7 @@ verifyFiles options baseName =
              else Properties
     typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ tm
         where
-            allocatorType = if allocator_concept then Just "typename _Alloc" else allocator
+            allocatorType = if allocator_concept then Just "_Alloc" else allocator
             typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocator_concept)  allocatorType 
             tm = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
 

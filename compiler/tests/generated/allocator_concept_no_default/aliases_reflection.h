@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <typename T, template<typename> typename _Alloc>
-    struct Foo<T, typename _Alloc>::Schema
+    template <typename T, template<typename> class _Alloc>
+    struct Foo<T, _Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -24,9 +24,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<T, typename _Alloc>,
+                Foo<T, _Alloc>,
                 std::vector<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<T> > >, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<T> > > > > >,
-                &Foo<T, typename _Alloc>::aa,
+                &Foo<T, _Alloc>::aa,
                 &s_aa_metadata
             > {}  aa;
         };
@@ -51,19 +51,19 @@ namespace tests
         }
     };
     
-    template <typename T, template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<T, typename _Alloc>::Schema::metadata
-        = Foo<T, typename _Alloc>::Schema::GetMetadata();
+    template <typename T, template<typename> class _Alloc>
+    const ::bond::Metadata Foo<T, _Alloc>::Schema::metadata
+        = Foo<T, _Alloc>::Schema::GetMetadata();
     
-    template <typename T, template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<T, typename _Alloc>::Schema::s_aa_metadata
+    template <typename T, template<typename> class _Alloc>
+    const ::bond::Metadata Foo<T, _Alloc>::Schema::s_aa_metadata
         = ::bond::reflection::MetadataInit("aa");
 
     //
     // WrappingAnEnum
     //
-    template <template<typename> typename _Alloc>
-    struct WrappingAnEnum<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct WrappingAnEnum<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -77,9 +77,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                WrappingAnEnum<typename _Alloc>,
+                WrappingAnEnum<_Alloc>,
                 ::tests::EnumToWrap,
-                &WrappingAnEnum<typename _Alloc>::aWrappedEnum,
+                &WrappingAnEnum<_Alloc>::aWrappedEnum,
                 &s_aWrappedEnum_metadata
             > {}  aWrappedEnum;
         };
@@ -104,12 +104,12 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata WrappingAnEnum<typename _Alloc>::Schema::metadata
-        = WrappingAnEnum<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::metadata
+        = WrappingAnEnum<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata WrappingAnEnum<typename _Alloc>::Schema::s_aWrappedEnum_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::s_aWrappedEnum_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumToWrap::anEnumValue, "aWrappedEnum");
 
     

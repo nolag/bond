@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <typename T1, typename T2, template<typename> typename _Alloc>
-    struct Foo<T1, T2, typename _Alloc>::Schema
+    template <typename T1, typename T2, template<typename> class _Alloc>
+    struct Foo<T1, T2, _Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -25,9 +25,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<T1, T2, typename _Alloc>,
+                Foo<T1, T2, _Alloc>,
                 T2,
-                &Foo<T1, T2, typename _Alloc>::t2,
+                &Foo<T1, T2, _Alloc>::t2,
                 &s_t2_metadata
             > {}  t2;
         
@@ -35,9 +35,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 1,
                 ::bond::reflection::optional_field_modifier,
-                Foo<T1, T2, typename _Alloc>,
+                Foo<T1, T2, _Alloc>,
                 ::bond::nullable< ::tests::Foo<T1, bool>, arena>,
-                &Foo<T1, T2, typename _Alloc>::n,
+                &Foo<T1, T2, _Alloc>::n,
                 &s_n_metadata
             > {}  n;
         };
@@ -64,16 +64,16 @@ namespace tests
         }
     };
     
-    template <typename T1, typename T2, template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<T1, T2, typename _Alloc>::Schema::metadata
-        = Foo<T1, T2, typename _Alloc>::Schema::GetMetadata();
+    template <typename T1, typename T2, template<typename> class _Alloc>
+    const ::bond::Metadata Foo<T1, T2, _Alloc>::Schema::metadata
+        = Foo<T1, T2, _Alloc>::Schema::GetMetadata();
     
-    template <typename T1, typename T2, template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<T1, T2, typename _Alloc>::Schema::s_t2_metadata
+    template <typename T1, typename T2, template<typename> class _Alloc>
+    const ::bond::Metadata Foo<T1, T2, _Alloc>::Schema::s_t2_metadata
         = ::bond::reflection::MetadataInit("t2");
     
-    template <typename T1, typename T2, template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<T1, T2, typename _Alloc>::Schema::s_n_metadata
+    template <typename T1, typename T2, template<typename> class _Alloc>
+    const ::bond::Metadata Foo<T1, T2, _Alloc>::Schema::s_n_metadata
         = ::bond::reflection::MetadataInit("n");
 
     

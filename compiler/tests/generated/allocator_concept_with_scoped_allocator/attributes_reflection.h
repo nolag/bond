@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> typename _Alloc>
-    struct Foo<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -24,9 +24,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > >,
-                &Foo<typename _Alloc>::f,
+                &Foo<_Alloc>::f,
                 &s_f_metadata
             > {}  f;
         };
@@ -54,12 +54,12 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::metadata
-        = Foo<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::metadata
+        = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_f_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_f_metadata
         = ::bond::reflection::MetadataInit("f", ::bond::reflection::optional_field_modifier::value,
                 {
                     { "FieldAttribute1", "one" },

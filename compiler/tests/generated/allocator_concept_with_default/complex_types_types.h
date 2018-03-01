@@ -22,7 +22,7 @@
 namespace tests
 {
     
-    template <template<typename> typename _Alloc=arena>
+    template <template<typename> class _Alloc=arena>
     struct Foo
     {
         
@@ -44,7 +44,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<typename _Alloc>>& allocator)
+        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
         {
         }
         
@@ -84,17 +84,17 @@ namespace tests
         }
     };
 
-    template <template<typename> typename _Alloc=arena>
-    inline void swap(::tests::Foo<typename _Alloc>& left, ::tests::Foo<typename _Alloc>& right)
+    template <template<typename> class _Alloc=arena>
+    inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
     }
 
-    template <template<typename> typename _Alloc>
+    template <template<typename> class _Alloc>
     struct Bar;
 
     
-    template <template<typename> typename _Alloc=arena>
+    template <template<typename> class _Alloc=arena>
     struct ComplexTypes
     {
         std::list<int8_t, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<int8_t> > > li8;
@@ -130,7 +130,7 @@ namespace tests
 #endif
         
         explicit
-        ComplexTypes(const _Alloc<::tests::ComplexTypes<typename _Alloc>>& allocator)
+        ComplexTypes(const _Alloc<::tests::ComplexTypes<_Alloc>>& allocator)
           : li8(allocator),
             sb(allocator),
             vb(allocator),
@@ -190,8 +190,8 @@ namespace tests
         }
     };
 
-    template <template<typename> typename _Alloc=arena>
-    inline void swap(::tests::ComplexTypes<typename _Alloc>& left, ::tests::ComplexTypes<typename _Alloc>& right)
+    template <template<typename> class _Alloc=arena>
+    inline void swap(::tests::ComplexTypes<_Alloc>& left, ::tests::ComplexTypes<_Alloc>& right)
     {
         left.swap(right);
     }
@@ -200,13 +200,13 @@ namespace tests
 namespace std
 {
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::Foo<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::Foo<typename _Alloc>>>
+        struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
     {};
 
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::ComplexTypes<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::ComplexTypes<typename _Alloc>>>
+        struct uses_allocator<::tests::ComplexTypes<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::ComplexTypes<_Alloc>>>
     {};
 }
 

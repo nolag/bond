@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> typename _Alloc>
-    struct Foo<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -26,9 +26,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 bool,
-                &Foo<typename _Alloc>::o,
+                &Foo<_Alloc>::o,
                 &s_o_metadata
             > {}  o;
         
@@ -36,9 +36,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 1,
                 ::bond::reflection::required_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int16_t,
-                &Foo<typename _Alloc>::r,
+                &Foo<_Alloc>::r,
                 &s_r_metadata
             > {}  r;
         
@@ -46,9 +46,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 2,
                 ::bond::reflection::required_optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 double,
-                &Foo<typename _Alloc>::ro,
+                &Foo<_Alloc>::ro,
                 &s_ro_metadata
             > {}  ro;
         };
@@ -77,21 +77,21 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::metadata
-        = Foo<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::metadata
+        = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_o_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_o_metadata
         = ::bond::reflection::MetadataInit("o");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_r_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_r_metadata
         = ::bond::reflection::MetadataInit("r", ::bond::reflection::required_field_modifier::value,
                 ::bond::reflection::Attributes());
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_ro_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_ro_metadata
         = ::bond::reflection::MetadataInit("ro", ::bond::reflection::required_optional_field_modifier::value,
                 ::bond::reflection::Attributes());
 

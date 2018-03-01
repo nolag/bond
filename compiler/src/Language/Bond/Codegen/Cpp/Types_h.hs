@@ -137,7 +137,7 @@ namespace std
 
         usesAllocator True s@Struct {..} = [lt|template<typename _AllocTo#{sepBeginBy ", typename " paramName declParams},  template<typename> class _Alloc>
         struct uses_allocator<#{className}, _AllocTo>
-        : is_convertible<typename _AllocTo, typename #{alloc}>
+        : is_convertible<_AllocTo, #{alloc}>
     {};|]
             where
                 className =  qualifiedClassName s

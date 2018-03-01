@@ -21,7 +21,7 @@ namespace deprecated
 namespace bondmeta
 {
     
-    template <template<typename> typename _Alloc=arena>
+    template <template<typename> class _Alloc=arena>
     struct HasMetaFields
     {
         std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > > full_name;
@@ -48,7 +48,7 @@ namespace bondmeta
         }
         
         explicit
-        HasMetaFields(const _Alloc<::deprecated::bondmeta::HasMetaFields<typename _Alloc>>& allocator)
+        HasMetaFields(const _Alloc<::deprecated::bondmeta::HasMetaFields<_Alloc>>& allocator)
           : full_name(allocator),
             name(allocator)
         {
@@ -90,8 +90,8 @@ namespace bondmeta
         }
     };
 
-    template <template<typename> typename _Alloc=arena>
-    inline void swap(::deprecated::bondmeta::HasMetaFields<typename _Alloc>& left, ::deprecated::bondmeta::HasMetaFields<typename _Alloc>& right)
+    template <template<typename> class _Alloc=arena>
+    inline void swap(::deprecated::bondmeta::HasMetaFields<_Alloc>& left, ::deprecated::bondmeta::HasMetaFields<_Alloc>& right)
     {
         left.swap(right);
     }
@@ -101,8 +101,8 @@ namespace bondmeta
 namespace std
 {
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::deprecated::bondmeta::HasMetaFields<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::deprecated::bondmeta::HasMetaFields<typename _Alloc>>>
+        struct uses_allocator<::deprecated::bondmeta::HasMetaFields<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::deprecated::bondmeta::HasMetaFields<_Alloc>>>
     {};
 }
 

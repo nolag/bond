@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <typename T, template<typename> typename _Alloc=std::allocator>
+    template <typename T, template<typename> class _Alloc=std::allocator>
     struct Foo
     {
         std::vector<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<T> > >, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<T> > > > > > aa;
@@ -43,7 +43,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<T, typename _Alloc>>& allocator)
+        Foo(const _Alloc<::tests::Foo<T, _Alloc>>& allocator)
         {
         }
         
@@ -85,8 +85,8 @@ namespace tests
         }
     };
 
-    template <typename T, template<typename> typename _Alloc=std::allocator>
-    inline void swap(::tests::Foo<T, typename _Alloc>& left, ::tests::Foo<T, typename _Alloc>& right)
+    template <typename T, template<typename> class _Alloc=std::allocator>
+    inline void swap(::tests::Foo<T, _Alloc>& left, ::tests::Foo<T, _Alloc>& right)
     {
         left.swap(right);
     }
@@ -161,7 +161,7 @@ namespace tests
     
 
     
-    template <template<typename> typename _Alloc=std::allocator>
+    template <template<typename> class _Alloc=std::allocator>
     struct WrappingAnEnum
     {
         ::tests::EnumToWrap aWrappedEnum;
@@ -186,7 +186,7 @@ namespace tests
 #endif
         
         explicit
-        WrappingAnEnum(const _Alloc<::tests::WrappingAnEnum<typename _Alloc>>& allocator)
+        WrappingAnEnum(const _Alloc<::tests::WrappingAnEnum<_Alloc>>& allocator)
           : aWrappedEnum(::tests::_bond_enumerators::EnumToWrap::anEnumValue)
         {
         }
@@ -229,8 +229,8 @@ namespace tests
         }
     };
 
-    template <template<typename> typename _Alloc=std::allocator>
-    inline void swap(::tests::WrappingAnEnum<typename _Alloc>& left, ::tests::WrappingAnEnum<typename _Alloc>& right)
+    template <template<typename> class _Alloc=std::allocator>
+    inline void swap(::tests::WrappingAnEnum<_Alloc>& left, ::tests::WrappingAnEnum<_Alloc>& right)
     {
         left.swap(right);
     }
@@ -239,13 +239,13 @@ namespace tests
 namespace std
 {
     template<typename _AllocTo, typename T,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::Foo<T, typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::Foo<T, typename _Alloc>>>
+        struct uses_allocator<::tests::Foo<T, _Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::Foo<T, _Alloc>>>
     {};
 
     template<typename _AllocTo,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::WrappingAnEnum<typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::WrappingAnEnum<typename _Alloc>>>
+        struct uses_allocator<::tests::WrappingAnEnum<_Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::WrappingAnEnum<_Alloc>>>
     {};
 }
 

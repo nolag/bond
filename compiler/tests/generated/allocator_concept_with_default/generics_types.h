@@ -20,7 +20,7 @@
 namespace tests
 {
     
-    template <typename T1, typename T2, template<typename> typename _Alloc=arena>
+    template <typename T1, typename T2, template<typename> class _Alloc=arena>
     struct Foo
     {
         T2 t2;
@@ -47,7 +47,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<T1, T2, typename _Alloc>>& allocator)
+        Foo(const _Alloc<::tests::Foo<T1, T2, _Alloc>>& allocator)
           : t2(),
             n(allocator)
         {
@@ -93,8 +93,8 @@ namespace tests
         }
     };
 
-    template <typename T1, typename T2, template<typename> typename _Alloc=arena>
-    inline void swap(::tests::Foo<T1, T2, typename _Alloc>& left, ::tests::Foo<T1, T2, typename _Alloc>& right)
+    template <typename T1, typename T2, template<typename> class _Alloc=arena>
+    inline void swap(::tests::Foo<T1, T2, _Alloc>& left, ::tests::Foo<T1, T2, _Alloc>& right)
     {
         left.swap(right);
     }
@@ -103,8 +103,8 @@ namespace tests
 namespace std
 {
     template<typename _AllocTo, typename T1, typename T2,  template<typename> class _Alloc>
-        struct uses_allocator<::tests::Foo<T1, T2, typename _Alloc>, _AllocTo>
-        : is_convertible<typename _AllocTo, typename _Alloc<::tests::Foo<T1, T2, typename _Alloc>>>
+        struct uses_allocator<::tests::Foo<T1, T2, _Alloc>, _AllocTo>
+        : is_convertible<_AllocTo, _Alloc<::tests::Foo<T1, T2, _Alloc>>>
     {};
 }
 

@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> typename _Alloc>
-    struct Foo<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -24,9 +24,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe< ::bond::blob>,
-                &Foo<typename _Alloc>::b,
+                &Foo<_Alloc>::b,
                 &s_b_metadata
             > {}  b;
         };
@@ -51,12 +51,12 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::metadata
-        = Foo<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::metadata
+        = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_b_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_b_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "b");
 
     

@@ -9,8 +9,8 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> typename _Alloc>
-    struct Foo<typename _Alloc>::Schema
+    template <template<typename> class _Alloc>
+    struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
 
@@ -59,9 +59,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 0,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 bool,
-                &Foo<typename _Alloc>::m_bool_1,
+                &Foo<_Alloc>::m_bool_1,
                 &s_m_bool_1_metadata
             > {}  m_bool_1;
         
@@ -69,9 +69,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 1,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 bool,
-                &Foo<typename _Alloc>::m_bool_2,
+                &Foo<_Alloc>::m_bool_2,
                 &s_m_bool_2_metadata
             > {}  m_bool_2;
         
@@ -79,9 +79,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 2,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<bool>,
-                &Foo<typename _Alloc>::m_bool_3,
+                &Foo<_Alloc>::m_bool_3,
                 &s_m_bool_3_metadata
             > {}  m_bool_3;
         
@@ -89,9 +89,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 3,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > >,
-                &Foo<typename _Alloc>::m_str_1,
+                &Foo<_Alloc>::m_str_1,
                 &s_m_str_1_metadata
             > {}  m_str_1;
         
@@ -99,9 +99,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 4,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<char> > > >,
-                &Foo<typename _Alloc>::m_str_2,
+                &Foo<_Alloc>::m_str_2,
                 &s_m_str_2_metadata
             > {}  m_str_2;
         
@@ -109,9 +109,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 5,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int8_t,
-                &Foo<typename _Alloc>::m_int8_4,
+                &Foo<_Alloc>::m_int8_4,
                 &s_m_int8_4_metadata
             > {}  m_int8_4;
         
@@ -119,9 +119,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 6,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<int8_t>,
-                &Foo<typename _Alloc>::m_int8_5,
+                &Foo<_Alloc>::m_int8_5,
                 &s_m_int8_5_metadata
             > {}  m_int8_5;
         
@@ -129,9 +129,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 7,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int16_t,
-                &Foo<typename _Alloc>::m_int16_4,
+                &Foo<_Alloc>::m_int16_4,
                 &s_m_int16_4_metadata
             > {}  m_int16_4;
         
@@ -139,9 +139,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 8,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<int16_t>,
-                &Foo<typename _Alloc>::m_int16_5,
+                &Foo<_Alloc>::m_int16_5,
                 &s_m_int16_5_metadata
             > {}  m_int16_5;
         
@@ -149,9 +149,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 9,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<int32_t>,
-                &Foo<typename _Alloc>::m_int32_4,
+                &Foo<_Alloc>::m_int32_4,
                 &s_m_int32_4_metadata
             > {}  m_int32_4;
         
@@ -159,9 +159,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 10,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int32_t,
-                &Foo<typename _Alloc>::m_int32_max,
+                &Foo<_Alloc>::m_int32_max,
                 &s_m_int32_max_metadata
             > {}  m_int32_max;
         
@@ -169,9 +169,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 11,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<int64_t>,
-                &Foo<typename _Alloc>::m_int64_4,
+                &Foo<_Alloc>::m_int64_4,
                 &s_m_int64_4_metadata
             > {}  m_int64_4;
         
@@ -179,9 +179,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 12,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 int64_t,
-                &Foo<typename _Alloc>::m_int64_max,
+                &Foo<_Alloc>::m_int64_max,
                 &s_m_int64_max_metadata
             > {}  m_int64_max;
         
@@ -189,9 +189,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 13,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 uint8_t,
-                &Foo<typename _Alloc>::m_uint8_2,
+                &Foo<_Alloc>::m_uint8_2,
                 &s_m_uint8_2_metadata
             > {}  m_uint8_2;
         
@@ -199,9 +199,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 14,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<uint8_t>,
-                &Foo<typename _Alloc>::m_uint8_3,
+                &Foo<_Alloc>::m_uint8_3,
                 &s_m_uint8_3_metadata
             > {}  m_uint8_3;
         
@@ -209,9 +209,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 15,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 uint16_t,
-                &Foo<typename _Alloc>::m_uint16_2,
+                &Foo<_Alloc>::m_uint16_2,
                 &s_m_uint16_2_metadata
             > {}  m_uint16_2;
         
@@ -219,9 +219,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 16,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<uint16_t>,
-                &Foo<typename _Alloc>::m_uint16_3,
+                &Foo<_Alloc>::m_uint16_3,
                 &s_m_uint16_3_metadata
             > {}  m_uint16_3;
         
@@ -229,9 +229,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 17,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<uint32_t>,
-                &Foo<typename _Alloc>::m_uint32_3,
+                &Foo<_Alloc>::m_uint32_3,
                 &s_m_uint32_3_metadata
             > {}  m_uint32_3;
         
@@ -239,9 +239,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 18,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 uint32_t,
-                &Foo<typename _Alloc>::m_uint32_max,
+                &Foo<_Alloc>::m_uint32_max,
                 &s_m_uint32_max_metadata
             > {}  m_uint32_max;
         
@@ -249,9 +249,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 19,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<uint64_t>,
-                &Foo<typename _Alloc>::m_uint64_3,
+                &Foo<_Alloc>::m_uint64_3,
                 &s_m_uint64_3_metadata
             > {}  m_uint64_3;
         
@@ -259,9 +259,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 20,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 uint64_t,
-                &Foo<typename _Alloc>::m_uint64_max,
+                &Foo<_Alloc>::m_uint64_max,
                 &s_m_uint64_max_metadata
             > {}  m_uint64_max;
         
@@ -269,9 +269,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 21,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<double>,
-                &Foo<typename _Alloc>::m_double_3,
+                &Foo<_Alloc>::m_double_3,
                 &s_m_double_3_metadata
             > {}  m_double_3;
         
@@ -279,9 +279,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 22,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 double,
-                &Foo<typename _Alloc>::m_double_4,
+                &Foo<_Alloc>::m_double_4,
                 &s_m_double_4_metadata
             > {}  m_double_4;
         
@@ -289,9 +289,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 23,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 double,
-                &Foo<typename _Alloc>::m_double_5,
+                &Foo<_Alloc>::m_double_5,
                 &s_m_double_5_metadata
             > {}  m_double_5;
         
@@ -299,9 +299,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 24,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<float>,
-                &Foo<typename _Alloc>::m_float_3,
+                &Foo<_Alloc>::m_float_3,
                 &s_m_float_3_metadata
             > {}  m_float_3;
         
@@ -309,9 +309,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 25,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 float,
-                &Foo<typename _Alloc>::m_float_4,
+                &Foo<_Alloc>::m_float_4,
                 &s_m_float_4_metadata
             > {}  m_float_4;
         
@@ -319,9 +319,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 26,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 float,
-                &Foo<typename _Alloc>::m_float_7,
+                &Foo<_Alloc>::m_float_7,
                 &s_m_float_7_metadata
             > {}  m_float_7;
         
@@ -329,9 +329,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 27,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum1,
+                &Foo<_Alloc>::m_enum1,
                 &s_m_enum1_metadata
             > {}  m_enum1;
         
@@ -339,9 +339,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 28,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum2,
+                &Foo<_Alloc>::m_enum2,
                 &s_m_enum2_metadata
             > {}  m_enum2;
         
@@ -349,9 +349,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 29,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe< ::tests::EnumType1>,
-                &Foo<typename _Alloc>::m_enum3,
+                &Foo<_Alloc>::m_enum3,
                 &s_m_enum3_metadata
             > {}  m_enum3;
         
@@ -359,9 +359,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 30,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum_int32min,
+                &Foo<_Alloc>::m_enum_int32min,
                 &s_m_enum_int32min_metadata
             > {}  m_enum_int32min;
         
@@ -369,9 +369,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 31,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum_int32max,
+                &Foo<_Alloc>::m_enum_int32max,
                 &s_m_enum_int32max_metadata
             > {}  m_enum_int32max;
         
@@ -379,9 +379,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 32,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum_uint32_min,
+                &Foo<_Alloc>::m_enum_uint32_min,
                 &s_m_enum_uint32_min_metadata
             > {}  m_enum_uint32_min;
         
@@ -389,9 +389,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 33,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::tests::EnumType1,
-                &Foo<typename _Alloc>::m_enum_uint32_max,
+                &Foo<_Alloc>::m_enum_uint32_max,
                 &s_m_enum_uint32_max_metadata
             > {}  m_enum_uint32_max;
         
@@ -399,9 +399,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 34,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<wchar_t> > >,
-                &Foo<typename _Alloc>::m_wstr_1,
+                &Foo<_Alloc>::m_wstr_1,
                 &s_m_wstr_1_metadata
             > {}  m_wstr_1;
         
@@ -409,9 +409,9 @@ namespace tests
             typedef struct : ::bond::reflection::FieldTemplate<
                 35,
                 ::bond::reflection::optional_field_modifier,
-                Foo<typename _Alloc>,
+                Foo<_Alloc>,
                 ::bond::maybe<std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<arena>::template rebind_alloc<wchar_t> > > >,
-                &Foo<typename _Alloc>::m_wstr_2,
+                &Foo<_Alloc>::m_wstr_2,
                 &s_m_wstr_2_metadata
             > {}  m_wstr_2;
         };
@@ -506,152 +506,152 @@ namespace tests
         }
     };
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::metadata
-        = Foo<typename _Alloc>::Schema::GetMetadata();
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::metadata
+        = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_bool_1_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_bool_1_metadata
         = ::bond::reflection::MetadataInit(true, "m_bool_1");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_bool_2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_bool_2_metadata
         = ::bond::reflection::MetadataInit(false, "m_bool_2");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_bool_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_bool_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_bool_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_str_1_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_str_1_metadata
         = ::bond::reflection::MetadataInit("default string value", "m_str_1");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_str_2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_str_2_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_str_2");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int8_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int8_4_metadata
         = ::bond::reflection::MetadataInit(static_cast<int8_t>(-127), "m_int8_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int8_5_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int8_5_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_int8_5");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int16_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int16_4_metadata
         = ::bond::reflection::MetadataInit(static_cast<int16_t>(-32767), "m_int16_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int16_5_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int16_5_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_int16_5");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int32_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int32_4_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_int32_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int32_max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int32_max_metadata
         = ::bond::reflection::MetadataInit(static_cast<int32_t>(2147483647), "m_int32_max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int64_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int64_4_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_int64_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_int64_max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_int64_max_metadata
         = ::bond::reflection::MetadataInit(static_cast<int64_t>(9223372036854775807LL), "m_int64_max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint8_2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint8_2_metadata
         = ::bond::reflection::MetadataInit(static_cast<uint8_t>(255), "m_uint8_2");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint8_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint8_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_uint8_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint16_2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint16_2_metadata
         = ::bond::reflection::MetadataInit(static_cast<uint16_t>(65535), "m_uint16_2");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint16_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint16_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_uint16_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint32_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint32_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_uint32_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint32_max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint32_max_metadata
         = ::bond::reflection::MetadataInit(static_cast<uint32_t>(4294967295), "m_uint32_max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint64_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint64_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_uint64_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_uint64_max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_uint64_max_metadata
         = ::bond::reflection::MetadataInit(static_cast<uint64_t>(18446744073709551615ULL), "m_uint64_max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_double_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_double_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_double_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_double_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_double_4_metadata
         = ::bond::reflection::MetadataInit(static_cast<double>(-123.456789), "m_double_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_double_5_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_double_5_metadata
         = ::bond::reflection::MetadataInit(static_cast<double>(-0.0), "m_double_5");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_float_3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_float_3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_float_3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_float_4_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_float_4_metadata
         = ::bond::reflection::MetadataInit(static_cast<float>(2.71828183f), "m_float_4");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_float_7_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_float_7_metadata
         = ::bond::reflection::MetadataInit(static_cast<float>(0.0f), "m_float_7");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum1_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum1_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::EnumValue1, "m_enum1");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum2_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::EnumValue3, "m_enum2");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum3_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum3_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_enum3");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum_int32min_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum_int32min_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::Int32Min, "m_enum_int32min");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum_int32max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum_int32max_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::Int32Max, "m_enum_int32max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum_uint32_min_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum_uint32_min_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::UInt32Min, "m_enum_uint32_min");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_enum_uint32_max_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_enum_uint32_max_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumType1::UInt32Max, "m_enum_uint32_max");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_wstr_1_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_wstr_1_metadata
         = ::bond::reflection::MetadataInit(L"default wstring value", "m_wstr_1");
     
-    template <template<typename> typename _Alloc>
-    const ::bond::Metadata Foo<typename _Alloc>::Schema::s_m_wstr_2_metadata
+    template <template<typename> class _Alloc>
+    const ::bond::Metadata Foo<_Alloc>::Schema::s_m_wstr_2_metadata
         = ::bond::reflection::MetadataInit(::bond::nothing, "m_wstr_2");
 
     
