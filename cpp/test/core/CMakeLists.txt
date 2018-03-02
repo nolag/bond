@@ -46,8 +46,8 @@ add_library (core_test_common
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/cmdargs_types.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/unit_test_core_apply.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/capped_allocator_tests_generated/allocator_test_types.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_default_allocator_tests_generated/allocator_test_types.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_custom_allocator_tests_generated/allocator_test_types.cpp")
+    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/template_alloc_default_allocator_tests_generated/allocator_test_types.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/template_alloc_custom_allocator_tests_generated/allocator_test_types.cpp")
 add_target_to_folder (core_test_common)
 add_dependencies(core_test_common
     unit_test_codegen1
@@ -110,22 +110,22 @@ add_bond_codegen (TARGET unit_test_codegen4
         
 add_bond_codegen (TARGET unit_test_codegen5
     allocator_test.bond
-    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_default_allocator_tests_generated"
+    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/template_alloc_default_allocator_tests_generated"
     OPTIONS
         --header=\\\"custom_protocols.h\\\"
-        --allocator-concept
-        --namespace=\"allocator_test=allocator_concept_default_allocator_tests\")
+        --template-alloc
+        --namespace=\"allocator_test=template_alloc_default_allocator_tests\")
         
 
 add_bond_codegen (TARGET unit_test_codegen6
     allocator_test.bond
-    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/allocator_concept_custom_allocator_tests_generated"
+    OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/template_alloc_custom_allocator_tests_generated"
     OPTIONS
         --header=\\\"custom_protocols.h\\\"
         --header=\\\"allocators.h\\\"
         --allocator=detail::TestAllocator
-        --allocator-concept
-        --namespace=\"allocator_test=allocator_concept_custom_allocator_tests\")
+        --template-alloc
+        --namespace=\"allocator_test=template_alloc_custom_allocator_tests\")
 
 # Full unit test is too big, .pdb files exceed compiler limit;
 # Since debugging such large executable is not practical anyways,
@@ -135,7 +135,7 @@ no_pdb()
 
 
 add_unit_test (allocator_test.cpp)
-add_unit_test (allocator_concept_test.cpp)
+add_unit_test (template_alloc_tests.cpp)
 add_unit_test (apply_tests.cpp)
 add_unit_test (basic_tests.cpp)
 add_unit_test (basic_type_lists.cpp)

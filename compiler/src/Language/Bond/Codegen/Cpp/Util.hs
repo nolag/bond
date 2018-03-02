@@ -217,10 +217,10 @@ defaultAllocator True allocator = allocator
 defaultAllocator False _ = Nothing
 
 needsTemplate :: [a] -> Bool -> Bool
-needsTemplate declParams allocator_concept = (not $ null declParams) || allocator_concept
+needsTemplate declParams template_alloc_enabled = (not $ null declParams) || template_alloc_enabled
 
 onlyTemplate :: [a] -> Bool -> Text -> Text
-onlyTemplate declParams allocator_concept x = if needsTemplate declParams allocator_concept then x else mempty
+onlyTemplate declParams template_alloc_enabled x = if needsTemplate declParams template_alloc_enabled then x else mempty
 
 onlyNonTemplate :: [a] -> Bool -> Text -> Text
-onlyNonTemplate declParams allocator_concept x = if not $ needsTemplate declParams allocator_concept then x else mempty
+onlyNonTemplate declParams template_alloc_enabled x = if not $ needsTemplate declParams template_alloc_enabled then x else mempty

@@ -1671,26 +1671,22 @@ copy and move constructors for the struct that would accept an allocator argumen
 In order to simplify the allocator instance propagation to string and container
 fields, `--scoped-alloc` flag will take advantage of [`std::scoped_allocator_adaptor`](http://en.cppreference.com/w/cpp/memory/scoped_allocator_adaptor).
 
-When cobined with the flag `--allocator-concept`, the custom allocator will be the default allocator type
+Bond APIs which allocate memory also allow use of custom allocators. In
+particular `bond::OutputMemoryStream`, which can be used as output stream for
+Bond serialization, can allocate the memory blobs for serialized payload with
+a user specified allocator.
 
-Allocator Concept
-=================
-
-The Bond complier flag `--allocator-concept` can be used to generate a templated schema structs
+The Bond complier flag `--template-alloc` can be used to generate a templated schema structs
 such that all containers are declared to use the templated allocator type:
 
 ```
-gbc c++ --allocator-concept example.bond
+gbc c++ --template-alloc example.bond
 ```
 The generated structs allow the use of any allocator which implements the C++ Standard
-Library allocator concept, with a default allocator type using std::allocator
+Library allocator concept.
 
-When combined with `--allocator`, the default will be replaced with the provided allocator type.
 
-Additionally `--alloc-ctors` flag can be passed in order to generate additional
-copy and move constructors for the struct that would accept an allocator argument.
-In order to simplify the allocator instance propagation to string and container
-fields, `--scoped-alloc` flag will take advantage of [`std::scoped_allocator_adaptor`](http://en.cppreference.com/w/cpp/memory/scoped_allocator_adaptor).
+When combined with `--allocator`, a default will be provided for the template type.
 
 
 ```cpp

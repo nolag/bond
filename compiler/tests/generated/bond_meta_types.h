@@ -30,6 +30,7 @@ namespace bondmeta
         {
             InitMetadata("HasMetaFields", "deprecated.bondmeta.HasMetaFields");
         }
+
         HasMetaFields(const HasMetaFields& other)
           : full_name(other.full_name.get_allocator()),
             name(other.name.get_allocator())
@@ -85,5 +86,4 @@ namespace bondmeta
     }
 } // namespace bondmeta
 } // namespace deprecated
-
 

@@ -31,6 +31,7 @@ namespace tests
           : t2()
         {
         }
+
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -102,9 +103,8 @@ namespace tests
 namespace std
 {
     template <typename _Alloc, typename T1, typename T2>
-        struct uses_allocator<typename ::tests::Foo<T1, T2>, _Alloc>
+    struct uses_allocator<typename ::tests::Foo<T1, T2>, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
-
 

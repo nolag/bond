@@ -27,6 +27,7 @@ namespace tests
         Foo()
         {
         }
+
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -162,6 +163,7 @@ namespace tests
           : aWrappedEnum(::tests::_bond_enumerators::EnumToWrap::anEnumValue)
         {
         }
+
         
         // Compiler generated copy ctor OK
         WrappingAnEnum(const WrappingAnEnum&) = default;
@@ -218,5 +220,4 @@ namespace tests
         left.swap(right);
     }
 } // namespace tests
-
 

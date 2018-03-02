@@ -62,6 +62,7 @@ namespace test
             na()
         {
         }
+
         
         // Compiler generated copy ctor OK
         foo(const foo&) = default;
@@ -172,9 +173,8 @@ namespace test
 namespace std
 {
     template <typename _Alloc>
-        struct uses_allocator< ::test::foo, _Alloc>
+    struct uses_allocator< ::test::foo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
-
 

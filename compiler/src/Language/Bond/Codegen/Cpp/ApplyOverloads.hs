@@ -24,7 +24,7 @@ data Protocol =
 
 -- Apply overloads
 applyOverloads :: [Protocol] -> MappingContext -> Text -> Text -> Maybe String -> Bool -> Declaration -> Text
-applyOverloads protocols cpp attr extern allocator allocator_concept s@Struct {..} | null declParams = [lt|
+applyOverloads protocols cpp attr extern allocator template_alloc_enabled s@Struct {..} | null declParams = [lt|
     //
     // Extern template specializations of Apply function with common
     // transforms for #{declName}#{allocatorNote}.
@@ -43,9 +43,9 @@ applyOverloads protocols cpp attr extern allocator allocator_concept s@Struct {.
                const ::bond::bonded< #{qualifiedName}, ::bond::SimpleBinaryReader< ::bond::InputBuffer>&>& value);
     #{newlineSep 1 applyOverloads' protocols}|]
   where
-    defaultAllocator = CPP.defaultAllocator allocator_concept allocator
+    defaultAllocator = CPP.defaultAllocator template_alloc_enabled allocator
     qualifiedName = CPP.qualifiedClassName cpp s defaultAllocator
-    allocatorNote = if allocator_concept then [lt| for the default allocator type, #{fromJust defaultAllocator}|] else mempty
+    allocatorNote = if template_alloc_enabled then [lt| for the default allocator type, #{fromJust defaultAllocator}|] else mempty
 
     applyOverloads' p = [lt|#{deserialization p}#{newlineSep 1 (serialization p) serializingTransforms}|]
 

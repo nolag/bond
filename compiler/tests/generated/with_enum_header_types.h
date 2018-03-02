@@ -167,6 +167,7 @@ namespace tests
             m_wstr_1(L"default wstring value")
         {
         }
+
         
         // Compiler generated copy ctor OK
         Foo(const Foo&) = default;
@@ -328,5 +329,4 @@ namespace tests
         left.swap(right);
     }
 } // namespace tests
-
 

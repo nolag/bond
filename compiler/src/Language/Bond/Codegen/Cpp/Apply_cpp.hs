@@ -18,13 +18,13 @@ apply_cpp :: [Protocol]   -- ^ List of protocols for which @Apply@ overloads sho
           -> Maybe String -- ^ optional custom allocator to be used in the generated code
           -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
           -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-apply_cpp protocols  allocator allocator_concept cpp file _imports declarations = ("_apply.cpp", [lt|
+apply_cpp protocols  allocator template_alloc_enabled cpp file _imports declarations = ("_apply.cpp", [lt|
 #include "#{file}_apply.h"
 #include "#{file}_reflection.h"
 
 namespace bond
 {
-    #{newlineSepEnd 1 (applyOverloads protocols cpp attr extern allocator allocator_concept) declarations}
+    #{newlineSepEnd 1 (applyOverloads protocols cpp attr extern allocator template_alloc_enabled) declarations}
 } // namespace bond
 |])
   where

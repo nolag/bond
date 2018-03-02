@@ -57,8 +57,8 @@ verifyApplyCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ apply_h protocols (export_attribute options) (allocator options) (allocator_concept options)
-        , apply_cpp protocols (allocator options) (allocator_concept options)
+        [ apply_h protocols (export_attribute options) (allocator options) (template_alloc_enabled options)
+        , apply_cpp protocols (allocator options) (template_alloc_enabled options)
         ]
     protocols =
         [ ProtocolReader "bond::CompactBinaryReader<bond::InputBuffer>"
@@ -77,8 +77,8 @@ verifyExportsCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ reflection_h (export_attribute options) (allocator options) (allocator_concept options)
-        , comm_h (export_attribute options) (allocator options) (allocator_concept options)
+        [ reflection_h (export_attribute options) (allocator options) (template_alloc_enabled options)
+        , comm_h (export_attribute options) (allocator options) (template_alloc_enabled options)
         ]
 
 verifyCppCommCodegen :: [String] -> FilePath -> TestTree
@@ -88,9 +88,9 @@ verifyCppCommCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ comm_h (export_attribute options) (allocator options) (allocator_concept options)
-        , comm_cpp (allocator_concept options)
-        , types_cpp (allocator_concept options)
+        [ comm_h (export_attribute options) (allocator options) (template_alloc_enabled options)
+        , comm_cpp (template_alloc_enabled options)
+        , types_cpp (template_alloc_enabled options)
         ]
 
 verifyCppGrpcCodegen :: [String] -> FilePath -> TestTree
@@ -100,9 +100,9 @@ verifyCppGrpcCodegen args baseName =
   where
     options = processOptions args
     templates =
-        [ grpc_h (export_attribute options) (allocator options) (allocator_concept options)
-        , grpc_cpp (allocator_concept options)
-        , types_cpp (allocator_concept options)
+        [ grpc_h (export_attribute options) (allocator options) (template_alloc_enabled options)
+        , grpc_cpp (template_alloc_enabled options)
+        , types_cpp (template_alloc_enabled options)
         ]
 
 verifyCsCommCodegen :: [String] -> FilePath -> TestTree
@@ -136,17 +136,17 @@ verifyFiles options baseName =
              else Properties
     typeMapping Cpp {..} = cppExpandAliases type_aliases_enabled $ tm
         where
-            allocatorType = if allocator_concept then Just "_Alloc" else allocator
-            typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocator_concept)  allocatorType 
+            allocatorType = if template_alloc_enabled then Just "_Alloc" else allocator
+            typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled template_alloc_enabled)  allocatorType 
             tm = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
 
     typeMapping Cs {} = csTypeMapping
     typeMapping Java {} = javaTypeMapping
     templates Cpp {..} =
-        [ (reflection_h export_attribute allocator allocator_concept)
-        , (types_cpp allocator_concept)
-        , (comm_cpp allocator_concept)
-        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
+        [ (reflection_h export_attribute allocator template_alloc_enabled)
+        , (types_cpp template_alloc_enabled)
+        , (comm_cpp template_alloc_enabled)
+        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled template_alloc_enabled
         ] <>
         [ enum_h | enum_header]
     templates Cs {..} =
@@ -180,18 +180,18 @@ verifyFiles options baseName =
             | isNothing allocator
         ] ++
         [ testGroup "allocator concept no default allocator provided" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_no_default")
-                (templates $ options { allocator_concept = True })
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_no_default")
+                (templates $ options { template_alloc_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "allocator concept with scoped allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_with_scoped_allocator")
-                (templates $ options { scoped_alloc_enabled = True, allocator_concept = True })
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_scoped_allocator")
+                (templates $ options { scoped_alloc_enabled = True, template_alloc_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "allocator concept default is allocator provided" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "allocator_concept_with_default")
-                (templates $ options { allocator = Just "arena", allocator_concept = True })
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_default")
+                (templates $ options { allocator = Just "arena", template_alloc_enabled = True })
             | isNothing allocator
         ]
     extra Java {} =

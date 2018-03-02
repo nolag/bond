@@ -32,6 +32,7 @@ namespace bondmeta
         {
             InitMetadata("HasMetaFields", "deprecated.bondmeta.HasMetaFields");
         }
+
         HasMetaFields(const HasMetaFields& other)
           : full_name(other.full_name.get_allocator()),
             name(other.name.get_allocator())
@@ -113,9 +114,8 @@ namespace bondmeta
 namespace std
 {
     template <typename _Alloc>
-        struct uses_allocator< ::deprecated::bondmeta::HasMetaFields, _Alloc>
+    struct uses_allocator< ::deprecated::bondmeta::HasMetaFields, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
-
 

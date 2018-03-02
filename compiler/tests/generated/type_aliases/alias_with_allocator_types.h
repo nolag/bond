@@ -58,6 +58,7 @@ namespace test
           : d("foo")
         {
         }
+
         
         // Compiler generated copy ctor OK
         foo(const foo&) = default;
@@ -175,6 +176,7 @@ namespace test
         withFoo(_bond_vc12_ctor_workaround_ = {})
         {
         }
+
         
         // Compiler generated copy ctor OK
         withFoo(const withFoo&) = default;
@@ -245,14 +247,13 @@ namespace test
 namespace std
 {
     template <typename _Alloc>
-        struct uses_allocator< ::test::foo, _Alloc>
+    struct uses_allocator< ::test::foo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 
     template <typename _Alloc>
-        struct uses_allocator< ::test::withFoo, _Alloc>
+    struct uses_allocator< ::test::withFoo, _Alloc>
         : is_convertible<_Alloc, arena>
     {};
 }
-
 

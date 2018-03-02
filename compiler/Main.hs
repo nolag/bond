@@ -78,9 +78,9 @@ writeSchema _ = error "writeSchema: impossible happened."
 
 cppCodegen :: Options -> IO()
 cppCodegen options@Cpp {..} = do
-    let allocatorType = if allocator_concept then Just "_Alloc" else allocator
+    let allocatorType = if template_alloc_enabled then Just "_Alloc" else allocator
 
-    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled allocator_concept)  allocatorType 
+    let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled template_alloc_enabled)  allocatorType 
     
     let typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
     concurrentlyFor_ files $ codeGen options typeMapping templates
@@ -98,15 +98,15 @@ cppCodegen options@Cpp {..} = do
         ]
     templates = concat $ map snd $ filter fst codegen_templates
     codegen_templates = [ (core_enabled, core_files)
-                        , (comm_enabled, [comm_h export_attribute allocator allocator_concept, comm_cpp allocator_concept])
-                        , (grpc_enabled, [grpc_h export_attribute allocator allocator_concept, grpc_cpp allocator_concept])
+                        , (comm_enabled, [comm_h export_attribute allocator template_alloc_enabled, comm_cpp template_alloc_enabled])
+                        , (grpc_enabled, [grpc_h export_attribute allocator template_alloc_enabled, grpc_cpp template_alloc_enabled])
                         ]
     core_files = [
-          reflection_h export_attribute allocator allocator_concept
-        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept
-        , types_cpp allocator_concept
-        , apply_h applyProto export_attribute allocator allocator_concept
-        , apply_cpp applyProto allocator allocator_concept
+          reflection_h export_attribute allocator template_alloc_enabled
+        , types_h header enum_header allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled template_alloc_enabled
+        , types_cpp template_alloc_enabled
+        , apply_h applyProto export_attribute allocator template_alloc_enabled
+        , apply_cpp applyProto allocator template_alloc_enabled
         ] <>
         [ enum_h | enum_header]
 cppCodegen _ = error "cppCodegen: impossible happened."

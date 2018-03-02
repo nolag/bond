@@ -25,7 +25,7 @@ grpc_h :: Maybe String
     -> Maybe String -- ^ optional custom allocator to be used in the generated code
     -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
     -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
-grpc_h export_attribute allocator allocator_concept cpp file imports declarations = ("_grpc.h", [lt|
+grpc_h export_attribute allocator template_alloc_enabled cpp file imports declarations = ("_grpc.h", [lt|
 #pragma once
 
 #include "#{file}_reflection.h"
@@ -180,11 +180,11 @@ inline #{className}::#{proxyName}<TThreadPool>::#{proxyName}(
 #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}
 |]
       where
-        allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
-        allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+        allocatorTemplateName = CPP.allocatorTemplateName template_alloc_enabled
+        allocatorDefaultType = CPP.defaultAllocator template_alloc_enabled allocator
         className = CPP.className s allocatorTemplateName
         template = CPP.template s False allocatorDefaultType
-        onlyTemplate = CPP.onlyTemplate declParams allocator_concept
+        onlyTemplate = CPP.onlyTemplate declParams template_alloc_enabled
         typename = onlyTemplate [lt|typename |]
 
         export_attr = optional (\a -> [lt|#{a}

@@ -34,7 +34,7 @@ types_h :: [String]     -- ^ list of optional header files to be @#include@'ed b
         -> Bool         -- ^ 'True' to use std::scoped_allocator_adaptor for strings and containers
         -> Bool         -- ^ 'True' to use use the allocator concept in the generated type
         -> MappingContext -> String -> [Import] -> [Declaration] -> (String, L.Text)
-types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled allocator_concept cpp file imports declarations = ("_types.h", [lt|
+types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enabled scoped_alloc_enabled template_alloc_enabled cpp file imports declarations = ("_types.h", [lt|
 #pragma once
 #{newlineBeginSep 0 includeHeader userHeaders}
 #include <bond/core/bond_version.h>
@@ -56,12 +56,11 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     #{doubleLineSepEnd 1 id $ catMaybes $ aliasDeclarations}#{doubleLineSep 1 typeDeclaration declarations}
 #{CPP.closeNamespace cpp}
 #{optional usesAllocatorSpecialization allocationMadeWith }
-
 |])
   where
-    allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
-    allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
-    allocationMadeWith = if allocator_concept then allocatorTemplateName else allocator
+    allocatorTemplateName = CPP.allocatorTemplateName template_alloc_enabled
+    allocatorDefaultType = CPP.defaultAllocator template_alloc_enabled allocator
+    allocationMadeWith = if template_alloc_enabled then allocatorTemplateName else allocator
 
     allocatorForClassFromTypes (Just _) _ className = Just ("_Alloc<" ++ className ++ ">")
     allocatorForClassFromTypes _ a _ = a
@@ -114,19 +113,19 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
         (have anyBonded, "<bond/core/bonded.h>"),
         (have anyBlob, "<bond/core/blob.h>"),
         (scoped_alloc_enabled && have anyStringOrContainer, "<scoped_allocator>"),
-        (allocator_concept, "<memory>")]
+        (template_alloc_enabled, "<memory>")]
 
     usesAllocatorSpecialization _ = [lt|
 namespace std
 {
-    #{doubleLineSep 1 (usesAllocator allocator_concept) declarations}
+    #{doubleLineSep 1 (usesAllocator template_alloc_enabled) declarations}
 }
 |]
       where
         qualifiedClassName s = CPP.qualifiedClassName cpp s allocatorTemplateName
 
         usesAllocator False s@Struct {..} = [lt|template <typename _Alloc#{sepBeginBy ", typename " paramName declParams}>
-        struct uses_allocator<#{typename} #{className}, _Alloc>
+    struct uses_allocator<#{typename} #{className}, _Alloc>
         : is_convertible<_Alloc, #{allocParam}>
     {};|]
             where
@@ -136,7 +135,7 @@ namespace std
                 allocParam = if last alloc == '>' then alloc ++ " " else alloc
 
         usesAllocator True s@Struct {..} = [lt|template<typename _AllocTo#{sepBeginBy ", typename " paramName declParams},  template<typename> class _Alloc>
-        struct uses_allocator<#{className}, _AllocTo>
+    struct uses_allocator<#{className}, _AllocTo>
         : is_convertible<_AllocTo, #{alloc}>
     {};|]
             where
@@ -153,6 +152,7 @@ namespace std
     #{template}struct #{declName}#{optional base structBase}
     {
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
+
         #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor classAllocator) mempty}
         #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor classAllocator) mempty}
         #{optional allocatorCtor classAllocator}
@@ -242,7 +242,7 @@ namespace std
         {
         }|]
 
-        needAlloc alloc = allocator_concept || isJust structBase || any (allocParameterized alloc . fieldType) structFields
+        needAlloc alloc = template_alloc_enabled || isJust structBase || any (allocParameterized alloc . fieldType) structFields
         
         allocParameterized alloc t = (isStruct t) || (L.isInfixOf (L.pack alloc) $ toLazyText $ cppTypeExpandAliases t)
 

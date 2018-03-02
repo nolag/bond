@@ -20,7 +20,7 @@ import qualified Language.Bond.Codegen.Cpp.Util as CPP
 -- | Codegen template for generating /base_name/_reflection.h containing schema
 -- metadata definitions.
 reflection_h :: Maybe String -> Maybe String -> Bool -> MappingContext -> String -> [Import] -> [Declaration] -> (String, Text)
-reflection_h export_attribute allocator allocator_concept cpp file imports declarations = ("_reflection.h", [lt|
+reflection_h export_attribute allocator template_alloc_enabled cpp file imports declarations = ("_reflection.h", [lt|
 #pragma once
 
 #include "#{file}_types.h"
@@ -68,17 +68,17 @@ reflection_h export_attribute allocator allocator_concept cpp file imports decla
     };
     #{onlyTemplate $ CPP.schemaMetadata cpp s allocatorTemplateName}|]
       where
-        allocatorTemplateName = CPP.allocatorTemplateName allocator_concept
-        allocatorDefaultType = CPP.defaultAllocator allocator_concept allocator
+        allocatorTemplateName = CPP.allocatorTemplateName template_alloc_enabled
+        allocatorDefaultType = CPP.defaultAllocator template_alloc_enabled allocator
 
         -- The allocator template type should not be in the list as a template type
         classParams = CPP.classParams s Nothing
         className = CPP.className s allocatorTemplateName
-        onlyTemplate = CPP.onlyTemplate declParams allocator_concept
-        export_attr = CPP.onlyNonTemplate declParams allocator_concept $ optional (\a -> [lt|#{a}
+        onlyTemplate = CPP.onlyTemplate declParams template_alloc_enabled
+        export_attr = CPP.onlyNonTemplate declParams template_alloc_enabled $ optional (\a -> [lt|#{a}
         |]) export_attribute
 
-        onlyParams = CPP.onlyTemplate declParams allocator_concept
+        onlyParams = CPP.onlyTemplate declParams template_alloc_enabled
 
         metadataInitArgs = if null declParams then mempty else [lt|<boost::mpl::list#{classParams} >|]
 

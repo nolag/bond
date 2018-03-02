@@ -50,6 +50,7 @@ namespace tests
             _float()
         {
         }
+
         
         // Compiler generated copy ctor OK
         BasicTypes(const BasicTypes&) = default;
@@ -145,5 +146,4 @@ namespace tests
         left.swap(right);
     }
 } // namespace tests
-
 
