@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Base
     {
         int32_t x;
@@ -88,14 +88,14 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::Base<_Alloc>& left, ::tests::Base<_Alloc>& right)
     {
         left.swap(right);
     }
 
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Foo
       : ::tests::Base<_Alloc>
     {
@@ -170,7 +170,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);

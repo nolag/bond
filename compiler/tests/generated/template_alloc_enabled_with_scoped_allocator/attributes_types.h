@@ -89,7 +89,7 @@ namespace tests
     
 
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Foo
     {
         std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > f;
@@ -157,7 +157,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);

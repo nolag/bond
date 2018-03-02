@@ -21,7 +21,7 @@
 namespace tests
 {
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct BasicTypes
     {
         bool _bool;
@@ -164,7 +164,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::BasicTypes<_Alloc>& left, ::tests::BasicTypes<_Alloc>& right)
     {
         left.swap(right);

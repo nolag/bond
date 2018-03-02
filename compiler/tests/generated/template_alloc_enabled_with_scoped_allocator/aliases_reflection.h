@@ -9,7 +9,7 @@ namespace tests
     //
     // Foo
     //
-    template <typename T, class _Alloc>
+    template <typename T, typename _Alloc>
     struct Foo<T, _Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -51,18 +51,18 @@ namespace tests
         }
     };
     
-    template <typename T, class _Alloc>
+    template <typename T, typename _Alloc>
     const ::bond::Metadata Foo<T, _Alloc>::Schema::metadata
         = Foo<T, _Alloc>::Schema::GetMetadata();
     
-    template <typename T, class _Alloc>
+    template <typename T, typename _Alloc>
     const ::bond::Metadata Foo<T, _Alloc>::Schema::s_aa_metadata
         = ::bond::reflection::MetadataInit("aa");
 
     //
     // WrappingAnEnum
     //
-    template <class _Alloc>
+    template <typename _Alloc>
     struct WrappingAnEnum<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -104,11 +104,11 @@ namespace tests
         }
     };
     
-    template <class _Alloc>
+    template <typename _Alloc>
     const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::metadata
         = WrappingAnEnum<_Alloc>::Schema::GetMetadata();
     
-    template <class _Alloc>
+    template <typename _Alloc>
     const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::s_aWrappedEnum_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumToWrap::anEnumValue, "aWrappedEnum");
 

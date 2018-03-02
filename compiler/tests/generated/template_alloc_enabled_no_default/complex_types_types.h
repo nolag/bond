@@ -22,7 +22,7 @@
 namespace tests
 {
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Foo
     {
         
@@ -85,17 +85,17 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
     }
 
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Bar;
 
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct ComplexTypes
     {
         std::list<int8_t, typename std::allocator_traits<_Alloc>::template rebind_alloc<int8_t> > li8;
@@ -192,7 +192,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::ComplexTypes<_Alloc>& left, ::tests::ComplexTypes<_Alloc>& right)
     {
         left.swap(right);

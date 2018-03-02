@@ -104,7 +104,7 @@ namespace tests
     
 
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct Foo
     {
         bool m_bool_1;
@@ -369,7 +369,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);

@@ -24,6 +24,7 @@ data Protocol =
 
 -- Apply overloads
 applyOverloads :: [Protocol] -> MappingContext -> Text -> Text -> Maybe String -> Bool -> Declaration -> Text
+applyOverloads _ _ _ _ Nothing True _ = mempty
 applyOverloads protocols cpp attr extern allocator template_alloc_enabled s@Struct {..} | null declParams = [lt|
     //
     // Extern template specializations of Apply function with common

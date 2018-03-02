@@ -20,7 +20,7 @@
 namespace nsmapped
 {
     
-    template <class _Alloc=arena>
+    template <typename _Alloc=arena>
     struct BasicTypes
     {
         bool _bool;
@@ -163,7 +163,7 @@ namespace nsmapped
         }
     };
 
-    template <class _Alloc=arena>
+    template <typename _Alloc=arena>
     inline void swap(::nsmapped::BasicTypes<_Alloc>& left, ::nsmapped::BasicTypes<_Alloc>& right)
     {
         left.swap(right);

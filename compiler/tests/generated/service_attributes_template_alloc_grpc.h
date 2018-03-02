@@ -38,7 +38,7 @@
 namespace tests
 {
 
-template <class _Alloc>
+template <typename _Alloc>
     class Foo final
 {
 public:
@@ -125,7 +125,7 @@ public:
     using Service = ServiceCore< ::bond::ext::gRPC::thread_pool>;
 };
 
-template <class _Alloc>
+template <typename _Alloc>
     template <typename TThreadPool>
 inline Foo<_Alloc>::ClientCore<TThreadPool>::ClientCore(
     const std::shared_ptr< ::grpc::ChannelInterface>& channel,
@@ -137,7 +137,7 @@ inline Foo<_Alloc>::ClientCore<TThreadPool>::ClientCore(
     , rpcmethod_foo_("/tests.Foo/foo", ::grpc::RpcMethod::NORMAL_RPC, channel)
     { }
 
-template <class _Alloc>
+template <typename _Alloc>
     template <typename TThreadPool>
 inline void Foo<_Alloc>::ClientCore<TThreadPool>::Asyncfoo(
     ::std::shared_ptr< ::grpc::ClientContext> context,
@@ -154,7 +154,7 @@ inline void Foo<_Alloc>::ClientCore<TThreadPool>::Asyncfoo(
     calldata->dispatch(rpcmethod_foo_, request);
 }
 
-template <class _Alloc>
+template <typename _Alloc>
     struct Foo<_Alloc>::Schema
 {
     static const ::bond::Metadata metadata;
@@ -184,14 +184,14 @@ template <class _Alloc>
         }
 };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     const ::bond::Metadata Foo<_Alloc>::Schema::metadata
         = ::bond::reflection::MetadataInit("Foo", "tests.Foo",
                 {
                     { "FooAttribute", "Bar" }
                 });
     
-    template <class _Alloc>
+    template <typename _Alloc>
     const ::bond::Metadata Foo<_Alloc>::Schema::s_foo_metadata
         = ::bond::reflection::MetadataInit("foo",
                 {

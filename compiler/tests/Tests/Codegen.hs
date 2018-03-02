@@ -179,20 +179,28 @@ verifyFiles options baseName =
                 (templates $ options { allocator = Just "arena", scoped_alloc_enabled = True })
             | isNothing allocator
         ] ++
-        [ testGroup "allocator concept no default allocator provided" $
+        [ testGroup "template allocator no default allocator provided" $
             map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False True "_Alloc") "template_alloc_enabled_no_default")
                 (templates $ options { template_alloc_enabled = True })
             | isNothing allocator
         ] ++
-        [ testGroup "allocator concept with scoped allocator" $
+        [ testGroup "template allocator with scoped allocator" $
             map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_scoped_allocator")
                 (templates $ options { scoped_alloc_enabled = True, template_alloc_enabled = True })
             | isNothing allocator
         ] ++
-        [ testGroup "allocator concept default is allocator provided" $
+        [ testGroup "template allocator default is allocator provided" $
             map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_default")
                 (templates $ options { allocator = Just "arena", template_alloc_enabled = True })
             | isNothing allocator
+        ] ++
+        [ testGroup "type aliases with template alloc" $
+            map (verify (cppCustomAllocTypeMapping False False "_Alloc") "type_aliases_template_alloc")
+                (templates $ options { allocator = Just "arena", type_aliases_enabled = True, template_alloc_enabled = True })
+        ] ++
+        [ testGroup "type aliases with template alloc no default" $
+            map (verify (cppCustomAllocTypeMapping False False "_Alloc") "type_aliases_template_alloc_no_default")
+                (templates $ options { type_aliases_enabled = True, template_alloc_enabled = True })
         ]
     extra Java {} =
         [

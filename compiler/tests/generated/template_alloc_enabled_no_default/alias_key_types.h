@@ -19,7 +19,7 @@
 namespace test
 {
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct foo
     {
         std::map<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, int32_t, std::less<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, int32_t> > > m;
@@ -92,7 +92,7 @@ namespace test
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::test::foo<_Alloc>& left, ::test::foo<_Alloc>& right)
     {
         left.swap(right);

@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <typename T, class _Alloc>
+    template <typename T, typename _Alloc>
     struct Foo
     {
         std::vector<std::vector<T, typename std::allocator_traits<_Alloc>::template rebind_alloc<T> >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector<T, typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > > > aa;
@@ -87,7 +87,7 @@ namespace tests
         }
     };
 
-    template <typename T, class _Alloc>
+    template <typename T, typename _Alloc>
     inline void swap(::tests::Foo<T, _Alloc>& left, ::tests::Foo<T, _Alloc>& right)
     {
         left.swap(right);
@@ -163,7 +163,7 @@ namespace tests
     
 
     
-    template <class _Alloc>
+    template <typename _Alloc>
     struct WrappingAnEnum
     {
         ::tests::EnumToWrap aWrappedEnum;
@@ -232,7 +232,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc>
+    template <typename _Alloc>
     inline void swap(::tests::WrappingAnEnum<_Alloc>& left, ::tests::WrappingAnEnum<_Alloc>& right)
     {
         left.swap(right);

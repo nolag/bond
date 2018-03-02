@@ -20,7 +20,7 @@
 namespace tests
 {
     
-    template <typename T1, typename T2, class _Alloc>
+    template <typename T1, typename T2, typename _Alloc>
     struct Foo
     {
         T2 t2;
@@ -94,7 +94,7 @@ namespace tests
         }
     };
 
-    template <typename T1, typename T2, class _Alloc>
+    template <typename T1, typename T2, typename _Alloc>
     inline void swap(::tests::Foo<T1, T2, _Alloc>& left, ::tests::Foo<T1, T2, _Alloc>& right)
     {
         left.swap(right);

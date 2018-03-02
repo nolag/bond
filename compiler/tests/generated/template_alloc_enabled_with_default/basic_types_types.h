@@ -20,7 +20,7 @@
 namespace tests
 {
     
-    template <class _Alloc=arena>
+    template <typename _Alloc=arena>
     struct BasicTypes
     {
         bool _bool;
@@ -163,7 +163,7 @@ namespace tests
         }
     };
 
-    template <class _Alloc=arena>
+    template <typename _Alloc=arena>
     inline void swap(::tests::BasicTypes<_Alloc>& left, ::tests::BasicTypes<_Alloc>& right)
     {
         left.swap(right);
