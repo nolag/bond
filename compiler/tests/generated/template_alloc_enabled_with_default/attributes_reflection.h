@@ -9,7 +9,7 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -54,11 +54,11 @@ namespace tests
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata Foo<_Alloc>::Schema::metadata
         = Foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata Foo<_Alloc>::Schema::s_f_metadata
         = ::bond::reflection::MetadataInit("f", ::bond::reflection::optional_field_modifier::value,
                 {

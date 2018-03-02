@@ -22,7 +22,7 @@
 namespace tests
 {
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Foo
     {
         
@@ -45,7 +45,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
         {
         }
         
@@ -85,26 +85,26 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
     }
 
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct Bar;
 
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct ComplexTypes
     {
-        std::list<int8_t, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<int8_t> > > li8;
-        std::set<bool, std::less<bool>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<bool> > > sb;
-        std::vector< ::bond::blob, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::blob> > > vb;
+        std::list<int8_t, typename std::allocator_traits<_Alloc>::template rebind_alloc<int8_t> > li8;
+        std::set<bool, std::less<bool>, typename std::allocator_traits<_Alloc>::template rebind_alloc<bool> > sb;
+        std::vector< ::bond::blob, typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::blob> > vb;
         ::bond::nullable<float> nf;
-        std::map<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > >, std::less<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > > > > > > msws;
-        ::bond::bonded< ::tests::Foo> bfoo;
-        std::map<double, std::list<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar> >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar> > > > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar> >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar> > > > > > > >, std::less<double>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const double, std::list<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar> >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar> > > > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar> >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar> > > > > > > > > > > > m;
+        std::map<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, std::basic_string<wchar_t, std::char_traits<wchar_t>, typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> >, std::less<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, std::basic_string<wchar_t, std::char_traits<wchar_t>, typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > > > > msws;
+        ::bond::bonded< ::tests::Foo<_Alloc> > bfoo;
+        std::map<double, std::list<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > > > >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > > > > > >, std::less<double>, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const double, std::list<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > > > >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc< ::bond::nullable< ::bond::bonded< ::tests::Bar<_Alloc> > > > > > > > > > m;
         
         struct _bond_vc12_ctor_workaround_ {};
         template <int = 0> // Workaround to avoid compilation if not used
@@ -132,7 +132,7 @@ namespace tests
 #endif
         
         explicit
-        ComplexTypes(const _Alloc<::tests::ComplexTypes<_Alloc>>& allocator)
+        ComplexTypes(const _Alloc& allocator)
           : li8(allocator),
             sb(allocator),
             vb(allocator),
@@ -192,7 +192,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::ComplexTypes<_Alloc>& left, ::tests::ComplexTypes<_Alloc>& right)
     {
         left.swap(right);
@@ -201,14 +201,14 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::ComplexTypes<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::ComplexTypes<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

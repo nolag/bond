@@ -10,7 +10,7 @@ using namespace examples::template_alloc;
 
 int main()
 {
-    MyAllocator<char> alloc;
+    MyAllocator alloc;
 
     Struct<MyAllocator> obj{ alloc };
     obj.ints.push_back(1);
@@ -25,7 +25,7 @@ int main()
 
     bond::CompactBinaryReader<bond::InputBuffer> reader1{ output1.GetBuffer() };
 
-    Struct<std::allocator> obj2;
+    Struct<std::allocator<char>> obj2;
     Deserialize(reader1, obj2);
     
     bond::OutputBuffer output2;

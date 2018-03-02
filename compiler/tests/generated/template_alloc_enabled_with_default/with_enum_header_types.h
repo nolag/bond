@@ -103,7 +103,7 @@ namespace tests
     
 
     
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     struct Foo
     {
         bool m_bool_1;
@@ -220,7 +220,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
           : m_bool_1(true),
             m_bool_2(false),
             m_bool_3(),
@@ -368,7 +368,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
@@ -377,9 +377,9 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

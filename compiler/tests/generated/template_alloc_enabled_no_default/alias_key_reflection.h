@@ -9,7 +9,7 @@ namespace test
     //
     // foo
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -26,7 +26,7 @@ namespace test
                 0,
                 ::bond::reflection::optional_field_modifier,
                 foo<_Alloc>,
-                std::map<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, int32_t, std::less<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, int32_t> > > >,
+                std::map<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, int32_t, std::less<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::pair<const std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >, int32_t> > >,
                 &foo<_Alloc>::m,
                 &s_m_metadata
             > {}  m;
@@ -36,7 +36,7 @@ namespace test
                 1,
                 ::bond::reflection::optional_field_modifier,
                 foo<_Alloc>,
-                std::set<int32_t, std::less<int32_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<int32_t> > >,
+                std::set<int32_t, std::less<int32_t>, typename std::allocator_traits<_Alloc>::template rebind_alloc<int32_t> >,
                 &foo<_Alloc>::s,
                 &s_s_metadata
             > {}  s;
@@ -64,15 +64,15 @@ namespace test
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata foo<_Alloc>::Schema::metadata
         = foo<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata foo<_Alloc>::Schema::s_m_metadata
         = ::bond::reflection::MetadataInit("m");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata foo<_Alloc>::Schema::s_s_metadata
         = ::bond::reflection::MetadataInit("s");
 

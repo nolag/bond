@@ -79,11 +79,12 @@ templateParams d = if null $ declParams d then mempty else params
 
 
 fillTemplateDefault :: Bool -> String -> Text
+fillTemplateDefault _ [] = mempty
 fillTemplateDefault True allocator =  [lt|=#{allocator}|]
 fillTemplateDefault False _ = mempty
 
 template :: Declaration -> Bool -> Maybe String -> Text
-template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}template<typename> class _Alloc#{fillTemplateDefault declared_here allocator}>
+template d declared_here (Just allocator) =  [lt|template <#{templateParams d}#{optComma}class _Alloc#{fillTemplateDefault declared_here allocator}>
     |]
     where
         optComma = if null $ declParams d then mempty else [lt|, |]
@@ -212,7 +213,7 @@ allocatorTemplateName False = Nothing
 allocatorTemplateName True = Just "_Alloc"
 
 defaultAllocator  :: Bool -> Maybe String -> Maybe String
-defaultAllocator True Nothing = Just "std::allocator"
+defaultAllocator True Nothing = Just []
 defaultAllocator True allocator = allocator
 defaultAllocator False _ = Nothing
 

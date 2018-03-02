@@ -443,12 +443,7 @@ cppTypeCustomAlloc scoped  template_alloc_enabled allocName BT_WString = "std::b
 cppTypeCustomAlloc scoped template_alloc_enabled allocName BT_MetaName = cppTypeCustomAlloc scoped template_alloc_enabled allocName BT_String
 cppTypeCustomAlloc scoped  template_alloc_enabled allocName BT_MetaFullName = cppTypeCustomAlloc scoped template_alloc_enabled allocName BT_String
 cppTypeCustomAlloc scoped template_alloc_enabled allocName (BT_List element) = "std::list<" <>> elementTypeName element <<>> ", " <>> allocator scoped template_alloc_enabled allocName element <<> ">"
-cppTypeCustomAlloc _ True allocName (BT_Nullable element)
-    | isStruct element = ("::bond::nullable<" <>> elementName <<> ", " <> allocName <> "<")  <<>> elementName <<> "> >"
-    | otherwise = "::bond::nullable<" <>> elementName <<> ">"
-        where
-            elementName = elementTypeName element
-cppTypeCustomAlloc _ False allocName (BT_Nullable element)
+cppTypeCustomAlloc _ _ allocName (BT_Nullable element)
     | isStruct element = "::bond::nullable<" <>> elementName <<> ", " <> allocName <> ">"
     | otherwise = "::bond::nullable<" <>> elementName <<> ">"
         where
@@ -468,7 +463,7 @@ comparer :: Type -> TypeNameBuilder
 comparer t = ", std::less<" <>> elementTypeName t <<> ">, "
 
 rebindAllocator :: Bool -> Bool -> Builder -> TypeNameBuilder -> TypeNameBuilder
-rebindAllocator False True _ element = "_Alloc<" <>> element <<> ">"
+rebindAllocator False True _ element = rebindAllocator False False "_Alloc" element
 rebindAllocator False False alloc element = "typename std::allocator_traits<" <>> alloc <>> ">::template rebind_alloc<" <>> element <<> ">"
 rebindAllocator True template_alloc_enabled alloc element = "std::scoped_allocator_adaptor<" <>> rebindAllocator False template_alloc_enabled alloc element <<> " >"
 

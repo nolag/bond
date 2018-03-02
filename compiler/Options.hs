@@ -103,7 +103,7 @@ cpp = Cpp
     , type_aliases_enabled = False &= explicit &= name "type-aliases" &= help "Generate type aliases"
     , scoped_alloc_enabled = False &= explicit &= name "scoped-alloc" &= help "Use std::scoped_allocator_adaptor for strings and containers"
     , service_inheritance_enabled = False &= explicit &= name "enable-service-inheritance" &= help "Enable service inheritance syntax in IDL"
-    , template_alloc_enabled = False &= explicit &= name "template-alloc" &= help "Generate type templated on an allocator that fits the allocator concept (see http://en.cppreference.com/w/cpp/concept/Allocator).  When specified with allocator, the provided allocator will be used as the default allocator type, otherwise std::allocator<void*> will be used."
+    , template_alloc_enabled = False &= explicit &= name "template-alloc" &= help "Generate type templated on an allocator that fits the allocator concept (see http://en.cppreference.com/w/cpp/concept/Allocator).  When specified with allocator, the provided allocator will be used as the default allocator type."
     } &=
     name "c++" &=
     help "Generate C++ code"

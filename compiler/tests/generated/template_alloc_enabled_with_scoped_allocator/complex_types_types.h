@@ -23,7 +23,7 @@
 namespace tests
 {
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Foo
     {
         
@@ -46,7 +46,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
         {
         }
         
@@ -86,17 +86,17 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
     }
 
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct Bar;
 
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct ComplexTypes
     {
         std::list<int8_t, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<int8_t> > > li8;
@@ -133,7 +133,7 @@ namespace tests
 #endif
         
         explicit
-        ComplexTypes(const _Alloc<::tests::ComplexTypes<_Alloc>>& allocator)
+        ComplexTypes(const _Alloc& allocator)
           : li8(allocator),
             sb(allocator),
             vb(allocator),
@@ -193,7 +193,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::ComplexTypes<_Alloc>& left, ::tests::ComplexTypes<_Alloc>& right)
     {
         left.swap(right);
@@ -202,14 +202,14 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::ComplexTypes<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::ComplexTypes<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

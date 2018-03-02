@@ -180,7 +180,7 @@ verifyFiles options baseName =
             | isNothing allocator
         ] ++
         [ testGroup "allocator concept no default allocator provided" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_no_default")
+            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False True "_Alloc") "template_alloc_enabled_no_default")
                 (templates $ options { template_alloc_enabled = True })
             | isNothing allocator
         ] ++

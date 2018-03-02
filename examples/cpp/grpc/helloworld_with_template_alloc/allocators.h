@@ -4,6 +4,8 @@
 
 namespace helloworld_with_template_alloc
 {
+namespace detail
+{
     template <typename T>
     struct ExampleAllocator
     {
@@ -38,4 +40,6 @@ namespace helloworld_with_template_alloc
         return false;
     }
 
+}
+    typedef detail::ExampleAllocator<char> ExampleAllocator;
 }

@@ -20,11 +20,11 @@
 namespace tests
 {
     
-    template <typename T1, typename T2, template<typename> class _Alloc=std::allocator>
+    template <typename T1, typename T2, class _Alloc>
     struct Foo
     {
         T2 t2;
-        ::bond::nullable< ::tests::Foo<T1, bool>, _Alloc> n;
+        ::bond::nullable< ::tests::Foo<T1, bool, _Alloc>, _Alloc> n;
         
         struct _bond_vc12_ctor_workaround_ {};
         template <int = 0> // Workaround to avoid compilation if not used
@@ -48,7 +48,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<T1, T2, _Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
           : t2(),
             n(allocator)
         {
@@ -94,7 +94,7 @@ namespace tests
         }
     };
 
-    template <typename T1, typename T2, template<typename> class _Alloc=std::allocator>
+    template <typename T1, typename T2, class _Alloc>
     inline void swap(::tests::Foo<T1, T2, _Alloc>& left, ::tests::Foo<T1, T2, _Alloc>& right)
     {
         left.swap(right);
@@ -103,9 +103,9 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo, typename T1, typename T2,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename T1, typename T2, typename _Alloc>
     struct uses_allocator<::tests::Foo<T1, T2, _Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<T1, T2, _Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

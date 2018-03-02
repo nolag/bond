@@ -62,11 +62,6 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     allocatorDefaultType = CPP.defaultAllocator template_alloc_enabled allocator
     allocationMadeWith = if template_alloc_enabled then allocatorTemplateName else allocator
 
-    allocatorForClassFromTypes (Just _) _ className = Just ("_Alloc<" ++ className ++ ">")
-    allocatorForClassFromTypes _ a _ = a
-
-    allocatorForClass = allocatorForClassFromTypes allocatorTemplateName allocator
-
     aliasDeclarations = if type_aliases_enabled then map aliasDeclName declarations else []
     aliasDeclName a@Alias {..} = Just [lt|#{CPP.template a False allocatorTemplateName}using #{declName} = #{getAliasDeclTypeName cpp a};|]
     aliasDeclName _ = Nothing
@@ -131,16 +126,15 @@ namespace std
             where
                 typename = if null declParams then mempty else [lt|typename|]
                 className =  qualifiedClassName s
-                alloc = fromJust (allocatorForClass $ className)
+                alloc = fromJust allocationMadeWith
                 allocParam = if last alloc == '>' then alloc ++ " " else alloc
 
-        usesAllocator True s@Struct {..} = [lt|template<typename _AllocTo#{sepBeginBy ", typename " paramName declParams},  template<typename> class _Alloc>
+        usesAllocator True s@Struct {..} = [lt|template<typename _AllocTo#{sepBeginBy ", typename " paramName declParams}, typename _Alloc>
     struct uses_allocator<#{className}, _AllocTo>
-        : is_convertible<_AllocTo, #{alloc}>
+        : is_convertible<_AllocTo, _Alloc>
     {};|]
             where
                 className =  qualifiedClassName s
-                alloc = fromJust (allocatorForClass $ qualifiedClassName s)
 
         usesAllocator _ _ = mempty
 
@@ -153,9 +147,9 @@ namespace std
     {
         #{newlineSepEnd 2 field structFields}#{defaultCtor}
 
-        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor classAllocator) mempty}
-        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor classAllocator) mempty}
-        #{optional allocatorCtor classAllocator}
+        #{copyCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorCopyCtor allocationMadeWith) mempty}
+        #{moveCtor}#{ifThenElse alloc_ctors_enabled (optional allocatorMoveCtor allocationMadeWith) mempty}
+        #{optional allocatorCtor allocationMadeWith}
         #{assignmentOp}
 
         bool operator==(const #{declName}&#{otherParam}) const
@@ -184,7 +178,6 @@ namespace std
         #{leftParamName}.swap(#{rightParamName});
     }|]
       where
-        classAllocator = allocatorForClass qualifiedClassName
         qualifiedClassName = CPP.qualifiedClassName cpp s allocatorTemplateName
         template = CPP.template s True allocatorDefaultType
 
@@ -250,7 +243,7 @@ namespace std
         defaultCtor = [lt|
         #{dummyTemplateTag}#{declName}(#{vc12WorkaroundParam})#{initList}#{ctorBody}|]
           where
-            needAllocParam = maybe False needAlloc classAllocator
+            needAllocParam = maybe False needAlloc allocationMadeWith
 
             vc12WorkaroundParam = if needAllocParam then [lt|_bond_vc12_ctor_workaround_ = {}|] else mempty
 

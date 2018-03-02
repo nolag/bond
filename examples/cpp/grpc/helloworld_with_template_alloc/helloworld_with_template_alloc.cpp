@@ -54,17 +54,17 @@ int main()
     std::unique_ptr<bond::ext::gRPC::server> server(builder.BuildAndStart());
 
     // This proves that the client and server can use different allocators
-    Greeter<std::allocator>::Client greeter(
+    Greeter<std::allocator<char>>::Client greeter(
         grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials()),
         ioManager,
         threadPool);
 
     const std::string user("world");
 
-    HelloRequest<> request;
+    HelloRequest<std::allocator<char>> request;
     request.name = user;
 
-    bond::ext::gRPC::wait_callback<HelloReply<>> cb;
+    bond::ext::gRPC::wait_callback<HelloReply<std::allocator<char>>> cb;
     greeter.AsyncSayHello(request, cb);
 
     bool waitResult = cb.wait_for(std::chrono::seconds(10));
@@ -80,7 +80,7 @@ int main()
         return 1;
     }
 
-    HelloReply<> reply;
+    HelloReply<std::allocator<char>> reply;
     cb.response().Deserialize(reply);
 
     if (reply.message.compare("hello world") != 0)

@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Base
     {
         int32_t x;
@@ -45,7 +45,7 @@ namespace tests
 #endif
         
         explicit
-        Base(const _Alloc<::tests::Base<_Alloc>>& allocator)
+        Base(const _Alloc& allocator)
           : x()
         {
         }
@@ -88,14 +88,14 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Base<_Alloc>& left, ::tests::Base<_Alloc>& right)
     {
         left.swap(right);
     }
 
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Foo
       : ::tests::Base
     {
@@ -123,7 +123,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
           : ::tests::Base(allocator),
             x()
         {
@@ -170,7 +170,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
@@ -179,14 +179,14 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Base<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Base<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

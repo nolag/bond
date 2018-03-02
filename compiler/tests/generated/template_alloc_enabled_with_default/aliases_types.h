@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <typename T, template<typename> class _Alloc=arena>
+    template <typename T, class _Alloc=arena>
     struct Foo
     {
         std::vector<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > > > > > aa;
@@ -44,7 +44,8 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<T, _Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
+          : aa(allocator)
         {
         }
         
@@ -86,7 +87,7 @@ namespace tests
         }
     };
 
-    template <typename T, template<typename> class _Alloc=arena>
+    template <typename T, class _Alloc=arena>
     inline void swap(::tests::Foo<T, _Alloc>& left, ::tests::Foo<T, _Alloc>& right)
     {
         left.swap(right);
@@ -162,7 +163,7 @@ namespace tests
     
 
     
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     struct WrappingAnEnum
     {
         ::tests::EnumToWrap aWrappedEnum;
@@ -188,7 +189,7 @@ namespace tests
 #endif
         
         explicit
-        WrappingAnEnum(const _Alloc<::tests::WrappingAnEnum<_Alloc>>& allocator)
+        WrappingAnEnum(const _Alloc& allocator)
           : aWrappedEnum(::tests::_bond_enumerators::EnumToWrap::anEnumValue)
         {
         }
@@ -231,7 +232,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     inline void swap(::tests::WrappingAnEnum<_Alloc>& left, ::tests::WrappingAnEnum<_Alloc>& right)
     {
         left.swap(right);
@@ -240,14 +241,14 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo, typename T,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename T, typename _Alloc>
     struct uses_allocator<::tests::Foo<T, _Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<T, _Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::WrappingAnEnum<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::WrappingAnEnum<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

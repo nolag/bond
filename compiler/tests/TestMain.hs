@@ -109,6 +109,12 @@ tests = testGroup "Compiler tests"
                     , "--apply-attribute=DllExport"
                     ]
                     "basic_types"
+                , verifyApplyCodegen
+                    [ "c++"
+                    , "--apply-attribute=DllExport"
+                    , "--template-alloc"
+                    ]
+                    "basic_types_template_alloc"
                 ]
            , testGroup "Exports"
                 [ verifyExportsCodegen
@@ -149,6 +155,11 @@ tests = testGroup "Compiler tests"
                     [ "c++"
                     ]
                     "service_attributes"
+                    , verifyCppGrpcCodegen
+                    [ "c++"
+                    , "--template-alloc"
+                    ]
+                    "service_attributes_template_alloc"
                 ]
             ]
         , testGroup "C#"

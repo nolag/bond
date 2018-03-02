@@ -9,7 +9,7 @@ using namespace examples::scoped_allocator_with_template_alloc;
 
 int main()
 {
-    MyAllocator<Struct<MyAllocator>> alloc{ 123 };
+    MyAllocator alloc{ 123 };
 
     Struct<MyAllocator> obj{ alloc };
     obj.ints.push_back(1);

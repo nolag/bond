@@ -24,11 +24,11 @@
 #include <type_traits>
 #include <vector>
 
-template<template <template <typename> typename> typename T, typename Reader, template <typename> typename DefaultAlloc, template <typename> typename OtherAlloc>
+template<template <typename> typename T, typename Reader, typename DefaultAlloc, typename OtherAlloc>
 void AllocatorConceptTestHelper()
 {
-    DefaultAlloc<T<DefaultAlloc> > defaultAlloc;
-    OtherAlloc<T<OtherAlloc> > otherAlloc;
+    DefaultAlloc defaultAlloc;
+    OtherAlloc otherAlloc;
 
     boost::shared_ptr<T<DefaultAlloc> > from = boost::allocate_shared<T<DefaultAlloc> >(defaultAlloc, defaultAlloc);
     InitRandom(*from);
@@ -100,23 +100,20 @@ using all_protocols = boost::mpl::list<
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptNoDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
 {
-    AllocatorConceptTestHelper<template_alloc_default_allocator_tests::Struct, Reader, std::allocator, detail::TestAllocator>();
+    AllocatorConceptTestHelper<template_alloc_default_allocator_tests::Struct, Reader, std::allocator<char>, TestAllocator>();
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(BondAllocatorConceptDefaultTypeProvidedDeserializationTest, Reader, all_protocols)
 {
-    AllocatorConceptTestHelper<template_alloc_custom_allocator_tests::Struct, Reader, detail::TestAllocator, std::allocator>();
+    AllocatorConceptTestHelper<template_alloc_custom_allocator_tests::Struct, Reader, TestAllocator, std::allocator<char>>();
 }
 
 // This test compiling proves that the defaults of the type are correct.
 // Since templated arguments cannot use defaults, we don't use templates here
 BOOST_AUTO_TEST_CASE(AllocatorConceptUsesCorrectDefaultAllocatorTest)
 {
-    template_alloc_default_allocator_tests::Struct<> stdAlloc;
     template_alloc_custom_allocator_tests::Struct<> customAlloc;
-    template_alloc_default_allocator_tests::Struct<std::allocator> stdAlloc2;
-    stdAlloc = stdAlloc2;
-    template_alloc_custom_allocator_tests::Struct<detail::TestAllocator> customAlloc2;
+    template_alloc_custom_allocator_tests::Struct<TestAllocator> customAlloc2;
     customAlloc = customAlloc2;
 }
 

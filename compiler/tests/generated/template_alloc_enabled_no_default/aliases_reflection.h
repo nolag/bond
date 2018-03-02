@@ -9,7 +9,7 @@ namespace tests
     //
     // Foo
     //
-    template <typename T, template<typename> class _Alloc>
+    template <typename T, class _Alloc>
     struct Foo<T, _Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -25,7 +25,7 @@ namespace tests
                 0,
                 ::bond::reflection::optional_field_modifier,
                 Foo<T, _Alloc>,
-                std::vector<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > >, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector<T, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > > > > >,
+                std::vector<std::vector<T, typename std::allocator_traits<_Alloc>::template rebind_alloc<T> >, typename std::allocator_traits<_Alloc>::template rebind_alloc<std::vector<T, typename std::allocator_traits<_Alloc>::template rebind_alloc<T> > > >,
                 &Foo<T, _Alloc>::aa,
                 &s_aa_metadata
             > {}  aa;
@@ -51,18 +51,18 @@ namespace tests
         }
     };
     
-    template <typename T, template<typename> class _Alloc>
+    template <typename T, class _Alloc>
     const ::bond::Metadata Foo<T, _Alloc>::Schema::metadata
         = Foo<T, _Alloc>::Schema::GetMetadata();
     
-    template <typename T, template<typename> class _Alloc>
+    template <typename T, class _Alloc>
     const ::bond::Metadata Foo<T, _Alloc>::Schema::s_aa_metadata
         = ::bond::reflection::MetadataInit("aa");
 
     //
     // WrappingAnEnum
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct WrappingAnEnum<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -104,11 +104,11 @@ namespace tests
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::metadata
         = WrappingAnEnum<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata WrappingAnEnum<_Alloc>::Schema::s_aWrappedEnum_metadata
         = ::bond::reflection::MetadataInit(::tests::_bond_enumerators::EnumToWrap::anEnumValue, "aWrappedEnum");
 

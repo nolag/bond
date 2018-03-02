@@ -103,14 +103,14 @@ namespace tests
     
 
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Foo
     {
         bool m_bool_1;
         bool m_bool_2;
         ::bond::maybe<bool> m_bool_3;
-        std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > m_str_1;
-        ::bond::maybe<std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > > m_str_2;
+        std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > m_str_1;
+        ::bond::maybe<std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > m_str_2;
         int8_t m_int8_4;
         ::bond::maybe<int8_t> m_int8_5;
         int16_t m_int16_4;
@@ -140,8 +140,8 @@ namespace tests
         ::tests::EnumType1 m_enum_int32max;
         ::tests::EnumType1 m_enum_uint32_min;
         ::tests::EnumType1 m_enum_uint32_max;
-        std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > > m_wstr_1;
-        ::bond::maybe<std::basic_string<wchar_t, std::char_traits<wchar_t>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > > > m_wstr_2;
+        std::basic_string<wchar_t, std::char_traits<wchar_t>, typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > m_wstr_1;
+        ::bond::maybe<std::basic_string<wchar_t, std::char_traits<wchar_t>, typename std::allocator_traits<_Alloc>::template rebind_alloc<wchar_t> > > m_wstr_2;
         
         struct _bond_vc12_ctor_workaround_ {};
         template <int = 0> // Workaround to avoid compilation if not used
@@ -220,7 +220,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
           : m_bool_1(true),
             m_bool_2(false),
             m_bool_3(),
@@ -368,7 +368,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
@@ -377,9 +377,9 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

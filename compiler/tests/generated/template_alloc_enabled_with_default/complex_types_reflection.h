@@ -9,7 +9,7 @@ namespace tests
     //
     // Foo
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct Foo<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -40,14 +40,14 @@ namespace tests
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata Foo<_Alloc>::Schema::metadata
         = Foo<_Alloc>::Schema::GetMetadata();
 
     //
     // ComplexTypes
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct ComplexTypes<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -167,35 +167,35 @@ namespace tests
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::metadata
         = ComplexTypes<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_li8_metadata
         = ::bond::reflection::MetadataInit("li8");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_sb_metadata
         = ::bond::reflection::MetadataInit("sb");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_vb_metadata
         = ::bond::reflection::MetadataInit("vb");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_nf_metadata
         = ::bond::reflection::MetadataInit("nf");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_msws_metadata
         = ::bond::reflection::MetadataInit("msws");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_bfoo_metadata
         = ::bond::reflection::MetadataInit("bfoo");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata ComplexTypes<_Alloc>::Schema::s_m_metadata
         = ::bond::reflection::MetadataInit("m");
 

@@ -88,7 +88,7 @@ namespace tests
     
 
     
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     struct Foo
     {
         std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > > f;
@@ -113,7 +113,7 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
+        Foo(const _Alloc& allocator)
           : f(allocator)
         {
         }
@@ -156,7 +156,7 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=arena>
+    template <class _Alloc=arena>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
@@ -165,9 +165,9 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

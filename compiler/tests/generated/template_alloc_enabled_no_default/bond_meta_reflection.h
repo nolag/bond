@@ -11,7 +11,7 @@ namespace bondmeta
     //
     // HasMetaFields
     //
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     struct HasMetaFields<_Alloc>::Schema
     {
         typedef ::bond::no_base base;
@@ -28,7 +28,7 @@ namespace bondmeta
                 0,
                 ::bond::reflection::required_optional_field_modifier,
                 HasMetaFields<_Alloc>,
-                std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >,
+                std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >,
                 &HasMetaFields<_Alloc>::full_name,
                 &s_full_name_metadata
             > {}  full_name;
@@ -38,7 +38,7 @@ namespace bondmeta
                 1,
                 ::bond::reflection::required_optional_field_modifier,
                 HasMetaFields<_Alloc>,
-                std::basic_string<char, std::char_traits<char>, std::scoped_allocator_adaptor<typename std::allocator_traits<_Alloc>::template rebind_alloc<char> > >,
+                std::basic_string<char, std::char_traits<char>, typename std::allocator_traits<_Alloc>::template rebind_alloc<char> >,
                 &HasMetaFields<_Alloc>::name,
                 &s_name_metadata
             > {}  name;
@@ -66,15 +66,15 @@ namespace bondmeta
         }
     };
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata HasMetaFields<_Alloc>::Schema::metadata
         = HasMetaFields<_Alloc>::Schema::GetMetadata();
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata HasMetaFields<_Alloc>::Schema::s_full_name_metadata
         = ::bond::reflection::MetadataInit("full_name");
     
-    template <template<typename> class _Alloc>
+    template <class _Alloc>
     const ::bond::Metadata HasMetaFields<_Alloc>::Schema::s_name_metadata
         = ::bond::reflection::MetadataInit("name");
 

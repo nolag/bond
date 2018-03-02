@@ -19,7 +19,7 @@
 namespace tests
 {
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Base
     {
         int32_t x;
@@ -45,7 +45,7 @@ namespace tests
 #endif
         
         explicit
-        Base(const _Alloc<::tests::Base<_Alloc>>& allocator)
+        Base(const _Alloc& allocator)
           : x()
         {
         }
@@ -88,16 +88,16 @@ namespace tests
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Base<_Alloc>& left, ::tests::Base<_Alloc>& right)
     {
         left.swap(right);
     }
 
     
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     struct Foo
-      : ::tests::Base
+      : ::tests::Base<_Alloc>
     {
         int32_t x;
         
@@ -114,7 +114,7 @@ namespace tests
         
 #if defined(_MSC_VER) && (_MSC_VER < 1900)  // Versions of MSVC prior to 1900 do not support = default for move ctors
         Foo(Foo&& other)
-          : ::tests::Base(std::move(other)),
+          : ::tests::Base<_Alloc>(std::move(other)),
             x(std::move(other.x))
         {
         }
@@ -123,8 +123,8 @@ namespace tests
 #endif
         
         explicit
-        Foo(const _Alloc<::tests::Foo<_Alloc>>& allocator)
-          : ::tests::Base(allocator),
+        Foo(const _Alloc& allocator)
+          : ::tests::Base<_Alloc>(allocator),
             x()
         {
         }
@@ -145,7 +145,7 @@ namespace tests
         bool operator==(const Foo& other) const
         {
             return true
-                && (static_cast<const ::tests::Base&>(*this) == static_cast<const ::tests::Base&>( other))
+                && (static_cast<const ::tests::Base<_Alloc>&>(*this) == static_cast<const ::tests::Base<_Alloc>&>( other))
                 && (x == other.x);
         }
 
@@ -157,7 +157,7 @@ namespace tests
         void swap(Foo& other)
         {
             using std::swap;
-            ::tests::Base::swap( other);
+            ::tests::Base<_Alloc>::swap( other);
             swap(x, other.x);
         }
 
@@ -166,11 +166,11 @@ namespace tests
     protected:
         void InitMetadata(const char*name, const char*qual_name)
         {
-            ::tests::Base::InitMetadata(name, qual_name);
+            ::tests::Base<_Alloc>::InitMetadata(name, qual_name);
         }
     };
 
-    template <template<typename> class _Alloc=std::allocator>
+    template <class _Alloc>
     inline void swap(::tests::Foo<_Alloc>& left, ::tests::Foo<_Alloc>& right)
     {
         left.swap(right);
@@ -179,14 +179,14 @@ namespace tests
 
 namespace std
 {
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Base<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Base<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 
-    template<typename _AllocTo,  template<typename> class _Alloc>
+    template<typename _AllocTo, typename _Alloc>
     struct uses_allocator<::tests::Foo<_Alloc>, _AllocTo>
-        : is_convertible<_AllocTo, _Alloc<::tests::Foo<_Alloc>>>
+        : is_convertible<_AllocTo, _Alloc>
     {};
 }
 

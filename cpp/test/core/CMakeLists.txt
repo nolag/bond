@@ -123,7 +123,7 @@ add_bond_codegen (TARGET unit_test_codegen6
     OPTIONS
         --header=\\\"custom_protocols.h\\\"
         --header=\\\"allocators.h\\\"
-        --allocator=detail::TestAllocator
+        --allocator=TestAllocator
         --template-alloc
         --namespace=\"allocator_test=template_alloc_custom_allocator_tests\")
 

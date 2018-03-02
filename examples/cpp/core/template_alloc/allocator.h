@@ -7,6 +7,8 @@ namespace examples
 {
 namespace template_alloc
 {
+namespace detail
+{
     template <typename T>
     struct MyAllocator
     {
@@ -41,5 +43,7 @@ namespace template_alloc
         return false;
     }
 
+}
+    typedef detail::MyAllocator<char> MyAllocator;
 }
 }

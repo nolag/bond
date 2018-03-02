@@ -7,6 +7,8 @@ namespace examples
 {
 namespace scoped_allocator_with_template_alloc
 {
+namespace detail
+{
     template <typename T>
     struct MyAllocator
     {
@@ -48,5 +50,7 @@ namespace scoped_allocator_with_template_alloc
         return false;
     }
 
+}
+    typedef detail::MyAllocator<char> MyAllocator;
 }
 }
