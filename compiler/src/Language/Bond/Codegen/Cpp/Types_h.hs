@@ -69,7 +69,8 @@ types_h userHeaders enumHeader allocator alloc_ctors_enabled type_aliases_enable
     hexVersion (Version xs _) = foldr showHex "" xs
     cppType = getTypeName cpp
 
-    cppExpandAliases = if type_aliases_enabled then cpp { typeMapping = cppExpandAliasesTypeMapping $ typeMapping cpp } else cpp
+    cppExpandAliasesTypeMap t = cppExpandAliasesTypeMapping t template_alloc_enabled
+    cppExpandAliases = if type_aliases_enabled then cpp { typeMapping = cppExpandAliasesTypeMap $ typeMapping cpp } else cpp
     cppTypeExpandAliases = getTypeName cppExpandAliases
 
     idl = MappingContext idlTypeMapping [] [] []

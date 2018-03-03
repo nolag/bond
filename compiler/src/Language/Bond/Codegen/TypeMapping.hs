@@ -187,12 +187,12 @@ cppCustomAllocTypeMapping scoped template_alloc_enabled allocName = TypeMapping
     (cppCustomAllocTypeMapping scoped template_alloc_enabled allocName)
     (cppCustomAllocTypeMapping scoped template_alloc_enabled allocName)
 
-cppExpandAliasesTypeMapping :: TypeMapping -> TypeMapping
-cppExpandAliasesTypeMapping m = m
-    { mapType = cppTypeExpandAliases $ mapType m
-    , instanceMapping = cppExpandAliasesTypeMapping $ instanceMapping m
-    , elementMapping = cppExpandAliasesTypeMapping $ elementMapping m
-    , annotatedMapping = cppExpandAliasesTypeMapping $ annotatedMapping m
+cppExpandAliasesTypeMapping :: TypeMapping -> Bool -> TypeMapping
+cppExpandAliasesTypeMapping m template_alloc_enabled = m
+    { mapType = cppTypeExpandAliases (mapType m) template_alloc_enabled
+    , instanceMapping = cppExpandAliasesTypeMapping  (instanceMapping m) template_alloc_enabled
+    , elementMapping = cppExpandAliasesTypeMapping  (elementMapping m) template_alloc_enabled
+    , annotatedMapping = cppExpandAliasesTypeMapping (annotatedMapping m) template_alloc_enabled
     }
 
 -- | The default C# type name mapping.
@@ -455,9 +455,10 @@ cppTypeCustomAlloc _ _ _ e@(BT_UserDefined Enum{..} _) = cppType e
 cppTypeCustomAlloc _  template_alloc_enabled _ (BT_UserDefined decl args) = declQualifiedTypeName decl <<>> (angles <$> commaSepTypeNamesWithAllocator args template_alloc_enabled)
 cppTypeCustomAlloc _ _ _ t = cppType t
 
-cppTypeExpandAliases :: (Type -> TypeNameBuilder) -> Type -> TypeNameBuilder
-cppTypeExpandAliases _ (BT_UserDefined a@Alias {..} args) = aliasTypeName a args
-cppTypeExpandAliases m t = m t
+cppTypeExpandAliases :: (Type -> TypeNameBuilder) -> Bool -> Type -> TypeNameBuilder
+cppTypeExpandAliases _ True (BT_UserDefined a@Alias {..} args) = aliasTypeName a (args ++ [(BT_TypeParam (TypeParam "_Alloc" Nothing))])
+cppTypeExpandAliases _ False (BT_UserDefined a@Alias {..} args) = aliasTypeName a args
+cppTypeExpandAliases m _ t = m t
 
 comparer :: Type -> TypeNameBuilder
 comparer t = ", std::less<" <>> elementTypeName t <<> ">, "

@@ -138,7 +138,7 @@ verifyFiles options baseName =
         where
             allocatorType = if template_alloc_enabled then Just "_Alloc" else allocator
             typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled template_alloc_enabled)  allocatorType 
-            tm = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
+            tm = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases template_alloc_enabled
 
     typeMapping Cs {} = csTypeMapping
     typeMapping Java {} = javaTypeMapping
@@ -161,12 +161,12 @@ verifyFiles options baseName =
         ]
     extra Cpp {..} =
         [ testGroup "custom allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False False "arena") "allocator")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping False False "arena") False) "allocator")
                 (templates $ options { allocator = Just "arena" })
             | isNothing allocator
         ] ++
         [ testGroup "constructors with allocator argument" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False False "arena") "alloc_ctors")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping False False "arena") False )"alloc_ctors")
                 (templates $ options { allocator = Just "arena", alloc_ctors_enabled = True })
             | isNothing allocator
         ] ++
@@ -175,22 +175,22 @@ verifyFiles options baseName =
                 (templates $ options { allocator = Just "arena", type_aliases_enabled = True })
         ] ++
         [ testGroup "scoped allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "arena") "scoped_allocator")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping True False "arena") False) "scoped_allocator")
                 (templates $ options { allocator = Just "arena", scoped_alloc_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "template allocator no default allocator provided" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping False True "_Alloc") "template_alloc_enabled_no_default")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping False True "_Alloc") True) "template_alloc_enabled_no_default")
                 (templates $ options { template_alloc_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "template allocator with scoped allocator" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_scoped_allocator")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping True False "_Alloc") True) "template_alloc_enabled_with_scoped_allocator")
                 (templates $ options { scoped_alloc_enabled = True, template_alloc_enabled = True })
             | isNothing allocator
         ] ++
         [ testGroup "template allocator default is allocator provided" $
-            map (verify (cppExpandAliasesTypeMapping $ cppCustomAllocTypeMapping True False "_Alloc") "template_alloc_enabled_with_default")
+            map (verify (cppExpandAliasesTypeMapping (cppCustomAllocTypeMapping True False "_Alloc") True)"template_alloc_enabled_with_default")
                 (templates $ options { allocator = Just "arena", template_alloc_enabled = True })
             | isNothing allocator
         ] ++
@@ -240,6 +240,6 @@ javaCatTemplate mappingContext _ imports declarations =
           _         -> Nothing
 
 cppExpandAliases :: Bool -> TypeMapping -> TypeMapping
-cppExpandAliases type_aliases_enabled = if type_aliases_enabled
-    then id
-    else cppExpandAliasesTypeMapping
+cppExpandAliases type_aliases_enabled tm = if type_aliases_enabled
+    then id tm
+    else cppExpandAliasesTypeMapping tm type_aliases_enabled

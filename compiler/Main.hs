@@ -82,7 +82,7 @@ cppCodegen options@Cpp {..} = do
 
     let typeMappingAliases = maybe cppTypeMapping (cppCustomAllocTypeMapping scoped_alloc_enabled template_alloc_enabled)  allocatorType 
     
-    let typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases
+    let typeMapping = if type_aliases_enabled then typeMappingAliases else cppExpandAliasesTypeMapping typeMappingAliases template_alloc_enabled
     concurrentlyFor_ files $ codeGen options typeMapping templates
   where
     applyProto = map snd $ filter (enabled apply) protocols
